@@ -1,0 +1,100 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+enum Gender {
+  UNDEFINED @map("undefined")
+  MALE      @map("male")
+  FEMALE    @map("female")
+
+  @@map("gender")
+}
+
+enum Role {
+  ADMIN @map("admin")
+  USER  @map("user")
+
+  @@map("system_role")
+}
+
+enum AuthType {
+  GITHUB @map("github")
+  GOOGLE @map("google")
+  KV     @map("kv")
+
+  @@map("auth_type")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.VarChar(1000)
+  username    String    @unique @db.VarChar(100)
+  email       String?   @db.VarChar(255)
+  password    String    @db.VarChar(100)
+  name        String?   @db.VarChar(1000)
+  firstName   String?   @map("first_name") @db.VarChar(255)
+  lastName    String?   @map("last_name") @db.VarChar(500)
+  gender      Gender?   @default(UNDEFINED)
+  phoneNumber String?   @map("phone_number") @db.VarChar(100)
+  birthDate   DateTime? @map("birth_date") @db.Date
+  address     String?   @db.VarChar(1500)
+  avatarUrl   String?   @map("avatar_url") @db.VarChar(1000)
+  biography   String?   @db.VarChar(1500)
+  verified    Boolean   @default(false)
+  enabled     Boolean   @default(true)
+  roles       Role[]    @default([USER]) @map("system_roles")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy   String?   @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy   String?   @map("updated_by") @db.VarChar(255)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
+  auths       Auth[]
+
+  @@map("user")
+}
+
+model Auth {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.VarChar(1000)
+  authType    AuthType  @map("auth_type")
+  accessToken String    @map("access_token")
+  openId      String?   @map("open_id") @db.VarChar(1000)
+  secretKey   String?   @map("secret_key") @db.VarChar(1000)
+  secretValue String?   @map("secret_value") @db.VarChar(1000)
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz(3)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy   String?   @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy   String?   @map("updated_by") @db.VarChar(255)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
+  User        User      @relation(fields: [userId], references: [id])
+  userId      Int       @map("user_id")
+  userUuid    String    @unique @map("user_uuid") @db.VarChar(1000)
+
+  @@map("auth")
+}
+
+model Setting {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.VarChar(1000)
+  key         String    @unique @db.VarChar(1000)
+  value       Json?     @db.Json
+  description String    @db.VarChar(1500)
+  enabled     Boolean   @default(true)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy   String?   @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy   String?   @map("updated_by") @db.VarChar(255)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
+
+  @@map("setting")
+}
