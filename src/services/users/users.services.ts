@@ -1,6 +1,6 @@
+import { compare, hash } from '@node-rs/bcrypt'
 import type { User } from '@prisma/client'
 import { Role } from '@prisma/client'
-import bcrypt from 'bcrypt'
 
 import { generateUUID, PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel } from '@/types'
@@ -97,10 +97,9 @@ export const filterSafeUserInfo = (user: User): UserSafeModel => {
   return filteredUser
 }
 
-export const passwordHash = async (password: string) => bcrypt.hash(password, 10)
+export const passwordHash = async (password: string) => hash(password, 10)
 
-export const passwordEquals = async (password: string, hashedPassword: string) =>
-  bcrypt.compare(password, hashedPassword)
+export const passwordEquals = async (password: string, hashedPassword: string) => compare(password, hashedPassword)
 
 export const verifyUser = async (id: number): Promise<User | null> =>
   PrismaQuery.user.update({

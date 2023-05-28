@@ -34,8 +34,8 @@
   },
   "dependencies": {
     "@ngneat/falso": "^6.4.0",
+    "@node-rs/bcrypt": "^1.7.1",
     "@prisma/client": "^4.14.1",
-    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
@@ -52,7 +52,6 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
     "@types/body-parser": "^1.19.2",
     "@types/cors": "^2.8.13",
     "@types/debug": "^4.1.8",
