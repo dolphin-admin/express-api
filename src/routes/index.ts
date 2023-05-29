@@ -1,6 +1,7 @@
 import homeRouter from './home.controller'
 import loginRouter from './login.controller'
 import settingsRouter from './settings.controller'
+import uploadRouter from './upload.controller'
 import userRouter from './users.controller'
 
 const routes = [
@@ -19,6 +20,10 @@ const routes = [
   {
     path: '/settings',
     router: settingsRouter
+  },
+  {
+    path: '/upload',
+    router: uploadRouter
   }
 ]
 
