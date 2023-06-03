@@ -27,15 +27,6 @@ enum Role {
   @@map("system_role")
 }
 
-// 认证类型枚举
-enum AuthType {
-  GITHUB @map("github")
-  GOOGLE @map("google")
-  KV     @map("kv")
-
-  @@map("auth_type")
-}
-
 // 审核状态枚举
 enum AuditStatus {
   PENDING  @map("pending")
@@ -70,7 +61,6 @@ model User {
   updatedBy      String?         @map("updated_by") @db.VarChar(255) // 更新人
   deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz(3) // 删除时间
   deletedBy      String?         @map("deleted_by") @db.VarChar(255) // 删除人
-  auths          Auth[] // 认证列表
   news           New[] // 新闻列表
   advertisements Advertisement[] // 广告列表
   comments       Comment[] // 评论列表
@@ -79,28 +69,6 @@ model User {
   visitRecords   VisitRecord[] // 访问记录列表
 
   @@map("user")
-}
-
-model Auth {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @unique @db.VarChar(1000)
-  authType    AuthType  @map("auth_type")
-  accessToken String    @map("access_token")
-  openId      String?   @map("open_id") @db.VarChar(1000)
-  secretKey   String?   @map("secret_key") @db.VarChar(1000)
-  secretValue String?   @map("secret_value") @db.VarChar(1000)
-  expiresAt   DateTime  @map("expires_at") @db.Timestamptz(3)
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  createdBy   String?   @map("created_by") @db.VarChar(255)
-  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  updatedBy   String?   @map("updated_by") @db.VarChar(255)
-  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
-  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
-  User        User      @relation(fields: [userId], references: [id])
-  userId      Int       @map("user_id")
-  userUuid    String    @map("user_uuid") @db.VarChar(1000)
-
-  @@map("auth")
 }
 
 // 设置表
@@ -123,7 +91,8 @@ model Setting {
 
 // 新闻表
 model New {
-  id                  Int           @id @default(autoincrement()) // 新闻ID
+  // 新闻ID
+  id                  Int           @id @default(autoincrement())
   uuid                String        @unique @db.VarChar(1000) // 新闻UUID
   title               String        @db.VarChar(1000) // 新闻标题
   description         String?       @db.VarChar(1500) // 新闻描述

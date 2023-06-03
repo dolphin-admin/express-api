@@ -1,0 +1,16 @@
+auths
+autoincrement
+commitlint
+datasource
+degit
+falso
+middlewares
+msword
+ngneat
+officedocument
+openxmlformats
+presentationml
+recallwei
+spreadsheetml
+Timestamptz
+wordprocessingml
