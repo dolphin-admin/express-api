@@ -1,16 +1,8 @@
 {
   "private": true,
-  "name": "news-app",
+  "name": "news-app-server",
   "version": "0.0.1",
   "author": "Bruce Song <recall4056@gmail.com> (https://github.com/recallwei/)",
-  "keywords": [
-    "node.js",
-    "express",
-    "typescript",
-    "prisma"
-  ],
-  "homepage": "https://github.com/recallwei/news-app#readme",
-  "repository": "github:recallwei/news-app",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "pnpm clear && tsc --build",
