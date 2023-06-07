@@ -12,7 +12,6 @@ export const validateToken = async (request: BaseRequest, response: BaseResponse
     return
   }
 
-  console.log(authorization)
   const verifiedResult = JWTManager.validateAccessToken(authorization)
   if (!verifiedResult) {
     response.status(401).json({ message: 'Invalid token!' })
