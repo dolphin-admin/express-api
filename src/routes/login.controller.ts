@@ -9,7 +9,7 @@ import type { BaseRequest } from '@/types'
 
 const router: Router = express.Router()
 
-router.get('/', async (request: BaseRequest, response: UserLoginResponse) => {
+router.post('/', async (request: BaseRequest, response: UserLoginResponse) => {
   const { username, password } = request.body as UserLoginInputModel
 
   if (!username?.trim() || !password?.trim()) {
