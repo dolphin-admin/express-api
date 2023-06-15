@@ -1,4 +1,7 @@
+const path = require('path')
+
 module.exports = {
+  root: true,
   env: {
     es2022: true,
     node: true
@@ -22,7 +25,7 @@ module.exports = {
       files: ['**/*.ts'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
-        project: './tsconfig.json',
+        project: path.join(__dirname, 'tsconfig.json'),
         ecmaVersion: 2022,
         sourceType: 'module'
       },

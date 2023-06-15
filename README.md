@@ -1,6 +1,7 @@
-# News App Sever
+# Dolphin Admin Server
 
-News App 是一个新闻站点的后端服务，基于 `Express/TypeScript/Prisma/PostgreSQL`，通过 [EST](https://github.com/recallwei/est) 模板构建。
+Dolphin Admin Server 是 DoDolphinlpin Admin Web 的后端服务，基于 `Express/TypeScript/Prisma/PostgreSQL`，
+通过 [EST](https://github.com/recallwei/est) 模板构建。
 
 ## 特性
 

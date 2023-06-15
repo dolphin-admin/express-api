@@ -8,252 +8,93 @@ generator client {
   binaryTargets = ["native"]
 }
 
-// 性别枚举
 enum Gender {
-  UNDEFINED @map("undefined") // 未定义
-  MALE      @map("male") // 男性
-  FEMALE    @map("female") // 女性
+  UNDEFINED @map("undefined")
+  MALE      @map("male")
+  FEMALE    @map("female")
 
   @@map("gender")
 }
 
-// 系统角色枚举
 enum Role {
-  ADMIN      @map("admin") // 管理员
-  USER       @map("user") // 普通用户
-  Editor     @map("editor") // 编辑
-  Advertiser @map("advertiser") // 广告商
+  ADMIN @map("admin")
+  USER  @map("user")
 
   @@map("system_role")
 }
 
-// 审核状态枚举
-enum AuditStatus {
-  PENDING  @map("pending")
-  APPROVED @map("approved")
-  REJECTED @map("rejected")
+enum AuthType {
+  GITHUB @map("github")
+  GOOGLE @map("google")
+  KV     @map("kv")
 
-  @@map("audit_status")
+  @@map("auth_type")
 }
 
-// 用户表
 model User {
-  id             Int             @id @default(autoincrement()) // 用户ID
-  uuid           String          @unique @db.VarChar(1000) // 用户UUID
-  username       String          @unique @db.VarChar(100) // 用户名
-  email          String?         @db.VarChar(255) // 邮箱
-  password       String          @db.VarChar(100) // 密码
-  name           String?         @db.VarChar(1000) // 姓名
-  firstName      String?         @map("first_name") @db.VarChar(255) // 名
-  lastName       String?         @map("last_name") @db.VarChar(500) // 姓
-  gender         Gender?         @default(UNDEFINED) // 性别
-  phoneNumber    String?         @map("phone_number") @db.VarChar(100) // 手机号
-  birthDate      DateTime?       @map("birth_date") @db.Date // 出生日期
-  address        String?         @db.VarChar(1500) // 地址
-  avatarUrl      String?         @map("avatar_url") @db.VarChar(1000) // 头像
-  biography      String?         @db.VarChar(1500) // 个人简介
-  verified       Boolean         @default(false) // 是否已验证
-  enabled        Boolean         @default(true) // 是否启用
-  roles          Role[]          @default([USER]) @map("system_roles") // 系统角色列表
-  createdAt      DateTime?       @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy      String?         @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt      DateTime?       @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy      String?         @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy      String?         @map("deleted_by") @db.VarChar(255) // 删除人
-  news           New[] // 新闻列表
-  advertisements Advertisement[] // 广告列表
-  comments       Comment[] // 评论列表
-  likes          Like[] // 点赞列表
-  stars          Star[] // 收藏列表
-  visitRecords   VisitRecord[] // 访问记录列表
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.VarChar(1000)
+  username    String    @unique @db.VarChar(100)
+  email       String?   @db.VarChar(255)
+  password    String    @db.VarChar(100)
+  name        String?   @db.VarChar(1000)
+  firstName   String?   @map("first_name") @db.VarChar(255)
+  lastName    String?   @map("last_name") @db.VarChar(500)
+  gender      Gender?   @default(UNDEFINED)
+  phoneNumber String?   @map("phone_number") @db.VarChar(100)
+  birthDate   DateTime? @map("birth_date") @db.Date
+  address     String?   @db.VarChar(1500)
+  avatarUrl   String?   @map("avatar_url") @db.VarChar(1000)
+  biography   String?   @db.VarChar(1500)
+  verified    Boolean   @default(false)
+  enabled     Boolean   @default(true)
+  roles       Role[]    @default([USER]) @map("system_roles")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy   String?   @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy   String?   @map("updated_by") @db.VarChar(255)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
+  auths       Auth[]
 
   @@map("user")
 }
 
-// 设置表
+model Auth {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.VarChar(1000)
+  authType    AuthType  @map("auth_type")
+  accessToken String    @map("access_token")
+  openId      String?   @map("open_id") @db.VarChar(1000)
+  secretKey   String?   @map("secret_key") @db.VarChar(1000)
+  secretValue String?   @map("secret_value") @db.VarChar(1000)
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz(3)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy   String?   @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy   String?   @map("updated_by") @db.VarChar(255)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
+  User        User      @relation(fields: [userId], references: [id])
+  userId      Int       @map("user_id")
+  userUuid    String    @map("user_uuid") @db.VarChar(1000)
+
+  @@map("auth")
+}
+
 model Setting {
-  id          Int       @id @default(autoincrement()) // 设置ID
-  uuid        String    @unique @db.VarChar(1000) // 设置UUID
-  key         String    @unique @db.VarChar(1000) // 设置键
-  value       Json?     @db.Json // 设置值
-  description String?   @db.VarChar(1500) // 设置描述
-  enabled     Boolean   @default(true) // 是否启用
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy   String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy   String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy   String?   @map("deleted_by") @db.VarChar(255) // 删除人
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.VarChar(1000)
+  key         String    @unique @db.VarChar(1000)
+  value       Json?     @db.Json
+  description String?   @db.VarChar(1500)
+  enabled     Boolean   @default(true)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy   String?   @map("created_by") @db.VarChar(255)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy   String?   @map("updated_by") @db.VarChar(255)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy   String?   @map("deleted_by") @db.VarChar(255)
 
   @@map("setting")
-}
-
-// 新闻表
-model New {
-  // 新闻ID
-  id                  Int           @id @default(autoincrement())
-  uuid                String        @unique @db.VarChar(1000) // 新闻UUID
-  title               String        @db.VarChar(1000) // 新闻标题
-  description         String?       @db.VarChar(1500) // 新闻描述
-  content             String        @db.VarChar(1500) // 新闻内容
-  bannerUrl           String?       @map("banner_url") @db.VarChar(1000) // 新闻图片地址
-  auditStatus         AuditStatus   @default(PENDING) @map("audit_status") // 审核状态
-  auditBy             String?       @map("audit_by") @db.VarChar(255) // 审核人
-  homeRecommended     Boolean       @default(false) @map("home_recommended") // 是否首页推荐
-  carouselRecommended Boolean       @default(false) @map("carousel_recommended") // 是否轮播推荐
-  traffic             Int           @default(0) @map("flow_count") // 流量
-  createdAt           DateTime?     @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy           String?       @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt           DateTime?     @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy           String?       @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt           DateTime?     @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy           String?       @map("deleted_by") @db.VarChar(255) // 删除人
-  User                User          @relation(fields: [userId], references: [id]) // 用户
-  userId              Int           @map("user_id") // 用户ID
-  userUuid            String        @map("user_uuid") @db.VarChar(1000) // 用户UUID
-  Category            Category      @relation(fields: [categoryId], references: [id])
-  categoryId          Int           @map("category_id") // 类别ID
-  categoryUuid        String        @map("category_uuid") @db.VarChar(1000) // 类别UUID
-  Tag                 Tag           @relation(fields: [tagId], references: [id])
-  tagId               Int           @map("tag_id") // 标签ID
-  tagUuid             String        @map("tag_uuid") @db.VarChar(1000) // 标签UUID
-  likes               Like[] // 点赞列表
-  stars               Star[] // 收藏列表
-  comments            Comment[] // 评论列表
-  visitRecords        VisitRecord[] // 访问记录列表
-
-  @@map("news")
-}
-
-// 广告表
-model Advertisement {
-  id        Int       @id @default(autoincrement()) // 广告ID
-  uuid      String    @unique @db.VarChar(1000) // 广告UUID
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  User      User      @relation(fields: [userId], references: [id]) // 用户
-  userId    Int       @map("user_id") // 用户ID
-  userUuid  String    @map("user_uuid") @db.VarChar(1000) // 用户UUID
-
-  @@map("advertisement")
-}
-
-// 类别表
-model Category {
-  id        Int       @id @default(autoincrement()) // 类别ID
-  uuid      String    @unique @db.VarChar(1000) // 类别UUID
-  name      String    @unique @db.VarChar(255) // 类别名称
-  order     Int       @default(0) // 排序
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  news      New[]
-
-  @@map("category")
-}
-
-// 标签表
-model Tag {
-  id        Int       @id @default(autoincrement()) // 标签ID
-  uuid      String    @unique @db.VarChar(1000) // 标签UUID
-  name      String    @unique @db.VarChar(255) // 类别名称
-  order     Int       @default(0) // 排序
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  news      New[]
-
-  @@map("tag")
-}
-
-// 点赞表
-model Like {
-  id        Int       @id @default(autoincrement()) // 点赞ID
-  uuid      String    @unique @db.VarChar(1000) // 点赞UUID
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  New       New       @relation(fields: [newId], references: [id])
-  newId     Int       @map("new_id") // 新闻ID
-  newUuid   String    @map("new_uuid") @db.VarChar(1000) // 新闻UUID
-  User      User      @relation(fields: [userId], references: [id])
-  userId    Int       @map("user_id") // 用户ID
-  userUuid  String    @map("user_uuid") @db.VarChar(1000) // 用户UUID
-
-  @@map("like")
-}
-
-// 收藏表
-model Star {
-  id        Int       @id @default(autoincrement()) // 收藏ID
-  uuid      String    @unique @db.VarChar(1000) // 收藏UUID
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  New       New       @relation(fields: [newId], references: [id])
-  newId     Int       @map("new_id") // 新闻ID
-  newUuid   String    @map("new_uuid") @db.VarChar(1000) // 新闻UUID
-  User      User      @relation(fields: [userId], references: [id])
-  userId    Int       @map("user_id") // 用户ID
-  userUuid  String    @map("user_uuid") @db.VarChar(1000) // 用户UUID
-
-  @@map("star")
-}
-
-// 评论表
-model Comment {
-  id        Int       @id @default(autoincrement()) // 评论ID
-  uuid      String    @unique @db.VarChar(1000) // 评论UUID
-  message   String    @db.VarChar(2000) // 评论内容
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  New       New       @relation(fields: [newId], references: [id])
-  newId     Int       @map("new_id") // 新闻ID
-  newUuid   String    @map("new_uuid") @db.VarChar(1000) // 新闻UUID
-  User      User      @relation(fields: [userId], references: [id])
-  userId    Int       @map("user_id") // 用户ID
-  userUuid  String    @map("user_uuid") @db.VarChar(1000) // 用户UUID
-
-  @@map("comment")
-}
-
-// 访问记录表
-model VisitRecord {
-  id        Int       @id @default(autoincrement()) // 访问记录ID
-  uuid      String    @unique @db.VarChar(1000) // 访问记录UUID
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
-  createdBy String?   @map("created_by") @db.VarChar(255) // 创建人
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
-  updatedBy String?   @map("updated_by") @db.VarChar(255) // 更新人
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
-  deletedBy String?   @map("deleted_by") @db.VarChar(255) // 删除人
-  New       New       @relation(fields: [newId], references: [id])
-  newId     Int       @map("new_id") // 新闻ID
-  newUuid   String    @map("new_uuid") @db.VarChar(1000) // 新闻UUID
-  User      User      @relation(fields: [userId], references: [id]) // 用户
-  userId    Int       @map("user_id") // 用户ID
-  userUuid  String    @map("user_uuid") @db.VarChar(1000) // 用户UUID
-
-  @@map("visit_record")
 }
