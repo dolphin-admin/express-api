@@ -13,7 +13,7 @@ export type UserExistModel = {
   user: User | null
 }
 
-export type UserUpdateInputModel = Pick<
+export type UserUpdateInputBaseModel = Pick<
   User,
   | 'email'
   | 'name'
@@ -27,15 +27,14 @@ export type UserUpdateInputModel = Pick<
   | 'biography'
 >
 
-export type UserUpdateModel = UserUpdateInputModel & { updateAt?: Date; updateBy?: string }
+export type UserUpdateModel = UserUpdateInputBaseModel & { updateAt?: Date; updateBy?: string }
 
-export type UserSignupModel = Pick<User, 'username' | 'password'>
-export type UserSignupInputModel = UserSignupModel & { confirmPassword: string }
+export type UserInputBaseModel = Pick<User, 'username' | 'password'>
+export type UserLoginInputModel = UserInputBaseModel
+export type UserSignupInputModel = UserInputBaseModel & { confirmPassword: string }
 
+export type UserLoginResponse = UserSignupResponse
 export type UserSignupResponse = BaseResponse<{
   user: UserSafeModel
   accessToken: string
 }>
-
-export type UserLoginInputModel = UserSignupModel
-export type UserLoginResponse = UserSignupResponse
