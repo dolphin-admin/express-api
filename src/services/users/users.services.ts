@@ -5,7 +5,7 @@ import { Role } from '@prisma/client'
 import { generateUUID, PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
-import type { UserExistModel, UserSafeModel, UserSignupModel, UsersModel, UserUpdateModel } from './users.models'
+import type { UserExistModel, UserInputBaseModel, UserSafeModel, UsersModel, UserUpdateModel } from './users.models'
 
 export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel> => {
   const { pageNum, pageSize } = pageModel
@@ -45,7 +45,7 @@ export const getUserById = async (id: number): Promise<User | null> =>
     }
   })
 
-export const createUser = async (user: UserSignupModel, options?: ServiceOptions): Promise<User> => {
+export const createUser = async (user: UserInputBaseModel, options?: ServiceOptions): Promise<User> => {
   const { request } = options || {}
   const currentUsername = request?.currentUser?.username
   return PrismaQuery.user.create({
