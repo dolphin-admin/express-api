@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "js,ts,json,yml",
   "ignore": ["dist", "node_modules"],
-  "exec": "node -r ts-node/register -r tsconfig-paths/register ./src/index.ts"
+  "exec": "ts-node ./src/index.ts"
 }
