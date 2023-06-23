@@ -1,5 +1,6 @@
 export * from './config'
 export * from './file-storage'
+export * from './i18n'
 export * from './logger'
 export * from './prisma'
 export * from './time'

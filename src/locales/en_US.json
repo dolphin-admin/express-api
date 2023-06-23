@@ -1,0 +1,68 @@
+{
+  "Welcome": "Welcome to Dolphin Admin!",
+  "Page": {
+    "Require": "PageNum and PageSize are required.",
+    "Invalid": "PageNum and PageSize must be numbers."
+  },
+  "Username": {
+    "Require": "Username is required.",
+    "MaxLength": "Username must be at least 4 characters.",
+    "NotExist": "Username does not exist.",
+    "AlreadyExist": "Username already exists."
+  },
+  "Password": {
+    "Require": "Password is required.",
+    "MaxLength": "Password must be at least 6 characters.",
+    "Incorrect": "Password is incorrect."
+  },
+  "ConfirmPassword": {
+    "Require": "Confirm password is required.",
+    "NotMatch": "Confirm password does not match."
+  },
+  "User": {
+    "ID": {
+      "Require": "User ID is required."
+    },
+    "NotExist": "User does not exist.",
+    "Created": "User created.",
+    "CreateFailed": "User create failed.",
+    "Updated": "User updated.",
+    "UpdateFailed": "User update failed.",
+    "Deleted": "User deleted.",
+    "DeleteFailed": "User delete failed."
+  },
+  "Key": {
+    "Require": "Key is required.",
+    "Invalid": "Key must be a string.",
+    "NotExist": "Key does not exist.",
+    "Created": "Key created.",
+    "Updated": "Key updated.",
+    "UpdateFailed": "Key update failed.",
+    "Deleted": "Key deleted.",
+    "DeleteFailed": "Key delete failed."
+  },
+  "Keys": {
+    "Require": "Keys are required.",
+    "Invalid": "Keys must be strings."
+  },
+  "File": {
+    "Require": "File is required."
+  },
+  "Files": {
+    "Require": "Files are required."
+  },
+  "Token": {
+    "Generate": {
+      "Failed": "Error generating token."
+    }
+  },
+  "Login": {
+    "Success": "Login success."
+  },
+  "Signup": {
+    "Success": "Signup success."
+  },
+  "Upload": {
+    "Success": "Upload success."
+  }
+}

@@ -1,25 +1,26 @@
 import type { Setting } from '@prisma/client'
-import type { Router } from 'express'
+import type { Request, Router } from 'express'
 import express from 'express'
 
 import { SettingsService } from '@/services'
-import type { BasePageResponse, BaseRequest, BaseResponse, PageRequestModel } from '@/types'
+import type { BasePageResponse, BaseResponse, PageRequestModel } from '@/types'
 
 const router: Router = express.Router()
 
-router.get('/', async (request: BaseRequest, response: BasePageResponse<Setting[]>) => {
+router.get('/', async (request: Request, response: BasePageResponse<Setting[]>) => {
+  const { t } = request
   const { pageNum, pageSize } = request.query
 
   if (!pageNum || !pageSize) {
     response.status(400).json({
-      message: 'Page number and page size are required.'
+      message: t('Page.Require')
     })
     return
   }
 
   if (typeof Number(pageNum) !== 'number' || typeof Number(pageSize) !== 'number') {
     response.status(400).json({
-      message: 'Page number and page size must be numbers.'
+      message: t('Page.Invalid')
     })
     return
   }
@@ -37,12 +38,13 @@ router.get('/', async (request: BaseRequest, response: BasePageResponse<Setting[
   })
 })
 
-router.get('/batch', async (request: BaseRequest, response: BaseResponse<Setting[]>) => {
+router.get('/batch', async (request: Request, response: BaseResponse<Setting[]>) => {
+  const { t } = request
   const { keys } = request.body
 
   if (!keys || !Array.isArray(keys)) {
     response.status(400).json({
-      message: 'Keys are required.'
+      message: t('Keys.Require')
     })
   }
 
@@ -53,7 +55,8 @@ router.get('/batch', async (request: BaseRequest, response: BaseResponse<Setting
   })
 })
 
-router.get('/:key', async (request: BaseRequest, response: BaseResponse<Setting>) => {
+router.get('/:key', async (request: Request, response: BaseResponse<Setting>) => {
+  const { t } = request
   const { key } = request.params
   const setting = await SettingsService.getSettingByKey(key)
   if (setting) {
@@ -62,24 +65,25 @@ router.get('/:key', async (request: BaseRequest, response: BaseResponse<Setting>
     })
   } else {
     response.status(404).json({
-      message: 'Setting not found.'
+      message: t('Key.NotExist')
     })
   }
 })
 
-router.post('/', async (request: BaseRequest, response: BaseResponse) => {
+router.post('/', async (request: Request, response: BaseResponse) => {
+  const { t } = request
   const { key, value, description } = request.body as Setting
 
   if (!key) {
     response.status(400).json({
-      message: 'Key is required.'
+      message: t('Key.Require')
     })
     return
   }
 
   if (typeof key !== 'string') {
     response.status(400).json({
-      message: 'Key must be strings.'
+      message: t('Key.Invalid')
     })
     return
   }
@@ -94,16 +98,17 @@ router.post('/', async (request: BaseRequest, response: BaseResponse) => {
   )
 
   response.status(201).json({
-    message: 'Setting created.'
+    message: t('Key.Created')
   })
 })
 
-router.post('/batch', async (request: BaseRequest, response: BaseResponse) => {
+router.post('/batch', async (request: Request, response: BaseResponse) => {
+  const { t } = request
   const { settings } = request.body
 
   if (!settings || !Array.isArray(settings)) {
     response.status(400).json({
-      message: 'Settings are required.'
+      message: t('Keys.Require')
     })
     return
   }
@@ -111,10 +116,10 @@ router.post('/batch', async (request: BaseRequest, response: BaseResponse) => {
   try {
     settings.forEach((setting) => {
       if (!setting.key) {
-        throw new Error('Key is required.')
+        throw new Error(t('Key.Require'))
       }
       if (typeof setting.key !== 'string') {
-        throw new Error('Key must be strings.')
+        throw new Error(t('Key.Invalid'))
       }
     })
   } catch (error: any) {
@@ -128,24 +133,25 @@ router.post('/batch', async (request: BaseRequest, response: BaseResponse) => {
   await SettingsService.createSettings(settings, { request })
 
   response.status(201).json({
-    message: 'Settings created.'
+    message: t('Key.Created')
   })
 })
 
-router.put('/:key', async (request: BaseRequest, response: BaseResponse) => {
+router.put('/:key', async (request: Request, response: BaseResponse) => {
+  const { t } = request
   const { key } = request.params
   const { value, description } = request.body as Setting
 
   if (!key) {
     response.status(400).json({
-      message: 'Key is required.'
+      message: t('Key.Require')
     })
     return
   }
 
   if (typeof key !== 'string') {
     response.status(400).json({
-      message: 'Key must be strings.'
+      message: t('Key.Invalid')
     })
     return
   }
@@ -161,29 +167,30 @@ router.put('/:key', async (request: BaseRequest, response: BaseResponse) => {
     )
 
     response.status(200).json({
-      message: 'Setting updated.'
+      message: t('Key.Updated')
     })
   } catch (error: any) {
     console.log(error)
     response.status(500).json({
-      message: 'Error updating setting.'
+      message: t('Key.UpdateFailed')
     })
   }
 })
 
-router.delete('/:key', async (request: BaseRequest, response: BaseResponse) => {
+router.delete('/:key', async (request: Request, response: BaseResponse) => {
+  const { t } = request
   const { key } = request.params
 
   if (!key) {
     response.status(400).json({
-      message: 'Key is required.'
+      message: t('Key.Require')
     })
     return
   }
 
   if (typeof key !== 'string') {
     response.status(400).json({
-      message: 'Key must be strings.'
+      message: t('Key.Invalid')
     })
     return
   }
@@ -191,12 +198,12 @@ router.delete('/:key', async (request: BaseRequest, response: BaseResponse) => {
   try {
     await SettingsService.deleteSettingByKey(key, { request })
     response.status(200).json({
-      message: 'Setting deleted.'
+      message: t('Key.Deleted')
     })
   } catch (error: any) {
     console.log(error)
     response.status(500).json({
-      message: 'Error deleting setting.'
+      message: t('Key.DeleteFailed')
     })
   }
 })

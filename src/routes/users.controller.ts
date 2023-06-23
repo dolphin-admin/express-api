@@ -1,28 +1,29 @@
 import type { User } from '@prisma/client'
-import type { Response, Router } from 'express'
+import type { Request, Response, Router } from 'express'
 import express from 'express'
 
 import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserSafeModel, UserSignupInputModel, UserSignupResponse, UserUpdateInputBaseModel } from '@/services'
 import { UsersService } from '@/services'
-import type { BasePageResponse, BaseRequest, BaseResponse, PageRequestModel } from '@/types'
+import type { BasePageResponse, BaseResponse, PageRequestModel } from '@/types'
 
 const router: Router = express.Router()
 
-router.get('/', async (request: BaseRequest, response: BasePageResponse<UserSafeModel[]>) => {
+router.get('/', async (request: Request, response: BasePageResponse<UserSafeModel[]>) => {
+  const { t } = request
   const { pageNum, pageSize } = request.query
 
   if (!pageNum || !pageSize) {
     response.status(400).json({
-      message: 'Page number and page size are required.'
+      message: t('Page.Require')
     })
     return
   }
 
   if (typeof Number(pageNum) !== 'number' || typeof Number(pageSize) !== 'number') {
     response.status(400).json({
-      message: 'Page number and page size must be numbers.'
+      message: t('Page.Invalid')
     })
     return
   }
@@ -40,7 +41,8 @@ router.get('/', async (request: BaseRequest, response: BasePageResponse<UserSafe
   })
 })
 
-router.get('/:id', async (request: BaseRequest, response: BaseResponse<User>) => {
+router.get('/:id', async (request: Request, response: BaseResponse<User>) => {
+  const { t } = request
   const id = Number(request.params.id)
   const user = await UsersService.getUserById(id)
   if (user) {
@@ -49,26 +51,45 @@ router.get('/:id', async (request: BaseRequest, response: BaseResponse<User>) =>
     })
   } else {
     response.status(404).json({
-      message: 'User not found.'
+      message: t('User.NotExist')
     })
   }
 })
 
-router.post('/', async (request: BaseRequest, response: UserSignupResponse) => {
+router.post('/', async (request: Request, response: UserSignupResponse) => {
+  const { t } = request
   const { username, password, confirmPassword } = request.body as UserSignupInputModel
 
-  // Required fields
-  if (!username?.trim() || !password?.trim() || !confirmPassword?.trim()) {
+  if (!password?.trim()) {
     response.status(400).json({
-      message: 'Username, password, and confirm password are required.'
+      message: t('Password.Require')
+    })
+    return
+  }
+  if (!confirmPassword?.trim()) {
+    response.status(400).json({
+      message: t('ConfirmPassword.Require')
     })
     return
   }
 
-  // Validate password
-  if (password !== confirmPassword) {
+  if (username.trim().length < 4) {
     response.status(400).json({
-      message: 'Passwords do not match.'
+      message: t('Username.MaxLength')
+    })
+    return
+  }
+
+  if (password.trim().length < 6) {
+    response.status(400).json({
+      message: t('Password.MaxLength')
+    })
+    return
+  }
+
+  if (confirmPassword !== password) {
+    response.status(400).json({
+      message: t('ConfirmPassword.NotMatch')
     })
     return
   }
@@ -76,7 +97,7 @@ router.post('/', async (request: BaseRequest, response: UserSignupResponse) => {
   // Check if username already exists
   if ((await UsersService.alreadyExists(username)).isExist) {
     response.status(409).json({
-      message: 'Username already exists.'
+      message: t('Username.AlreadyExist')
     })
     return
   }
@@ -99,7 +120,7 @@ router.post('/', async (request: BaseRequest, response: UserSignupResponse) => {
     const accessToken = JWTManager.generateAccessToken(jwtUserModel)
     if (!accessToken) {
       response.status(401).json({
-        message: 'Error generating token.'
+        message: t('Token.Generate.Failed')
       })
       return
     }
@@ -108,22 +129,24 @@ router.post('/', async (request: BaseRequest, response: UserSignupResponse) => {
       data: {
         user: UsersService.filterSafeUserInfo(user),
         accessToken
-      }
+      },
+      message: t('User.Created')
     })
   } catch (error) {
     console.log(error)
     response.status(500).json({
-      message: 'Error creating user.'
+      message: t('User.CreateFailed')
     })
   }
 })
 
-router.put('/:id', async (request: BaseRequest, response: Response) => {
+router.put('/:id', async (request: Request, response: Response) => {
+  const { t } = request
   const id = Number(request.params.id)
 
   if (!id) {
     response.status(400).json({
-      message: 'User ID is required.'
+      message: t('User.ID.Require')
     })
     return
   }
@@ -149,21 +172,22 @@ router.put('/:id', async (request: BaseRequest, response: Response) => {
       { request }
     )
     response.status(200).json({
-      message: 'User updated.'
+      message: t('User.Updated')
     })
   } catch (error) {
     console.log(error)
     response.status(500).json({
-      message: 'Error updating user.'
+      message: t('User.UpdateFailed')
     })
   }
 })
 
-router.delete('/:id', async (request: BaseRequest, response: BaseResponse) => {
+router.delete('/:id', async (request: Request, response: BaseResponse) => {
+  const { t } = request
   const id = Number(request.params.id)
   if (!id) {
     response.status(400).json({
-      message: 'User ID is required.'
+      message: t('User.ID.Require')
     })
     return
   }
@@ -171,12 +195,12 @@ router.delete('/:id', async (request: BaseRequest, response: BaseResponse) => {
   try {
     await UsersService.deleteUser(id, { request })
     response.status(200).json({
-      message: 'User deleted.'
+      message: t('User.Deleted')
     })
   } catch (error) {
     console.log(error)
     response.status(500).json({
-      message: 'Error deleting user.'
+      message: t('User.DeleteFailed')
     })
   }
 })
