@@ -13,7 +13,7 @@
   "Password": {
     "Require": "密码不能为空",
     "MaxLength": "密码至少位 6 位",
-    "Incorrect": "密码错误"
+    "Incorrect": "用户名或密码错误"
   },
   "ConfirmPassword": {
     "Require": "确认密码不能为空",

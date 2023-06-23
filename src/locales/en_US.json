@@ -13,7 +13,7 @@
   "Password": {
     "Require": "Password is required.",
     "MaxLength": "Password must be at least 6 characters.",
-    "Incorrect": "Password is incorrect."
+    "Incorrect": "Username or password is incorrect."
   },
   "ConfirmPassword": {
     "Require": "Confirm password is required.",
