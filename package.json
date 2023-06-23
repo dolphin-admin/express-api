@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "pnpm clear && tsc --build",
-    "start": "cross-env NODE_ENV=production npm run build && ts-node ./dist/src/index.js",
+    "start": "cross-env NODE_ENV=production npm run build && ts-node --files ./dist/src/index.js",
     "clear": "tsc --build --clean",
     "prepare": "husky install",
     "cspell:check": "cspell **",
