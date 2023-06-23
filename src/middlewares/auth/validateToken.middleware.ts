@@ -1,10 +1,10 @@
-import type { NextFunction } from 'express'
+import type { NextFunction, Request } from 'express'
 
 import { JWTManager } from '@/core'
 import { UsersService } from '@/services'
-import type { BaseRequest, BaseResponse } from '@/types'
+import type { BaseResponse } from '@/types'
 
-export const validateToken = async (request: BaseRequest, response: BaseResponse, next: NextFunction) => {
+export const validateToken = async (request: Request, response: BaseResponse, next: NextFunction) => {
   const { authorization } = request.headers
 
   if (!authorization) {

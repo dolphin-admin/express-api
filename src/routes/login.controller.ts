@@ -1,34 +1,41 @@
-import type { Router } from 'express'
+import type { Request, Router } from 'express'
 import express from 'express'
 
 import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserLoginInputModel, UserLoginResponse } from '@/services'
 import { UsersService } from '@/services'
-import type { BaseRequest } from '@/types'
 
 const router: Router = express.Router()
 
-router.post('/', async (request: BaseRequest, response: UserLoginResponse) => {
+router.post('/', async (request: Request, response: UserLoginResponse) => {
+  const { t } = request
   const { username, password } = request.body as UserLoginInputModel
 
-  if (!username?.trim() || !password?.trim()) {
+  if (!username?.trim()) {
     response.status(400).json({
-      message: 'Username and password are required.'
+      message: t('Username.Require')
+    })
+    return
+  }
+
+  if (!password?.trim()) {
+    response.status(400).json({
+      message: t('Password.Require')
     })
     return
   }
 
   if (username.trim().length < 4) {
     response.status(400).json({
-      message: 'Username must be at least 4 characters.'
+      message: t('Username.MaxLength')
     })
     return
   }
 
   if (password.trim().length < 6) {
     response.status(400).json({
-      message: 'Password must be at least 6 characters.'
+      message: t('Password.MaxLength')
     })
     return
   }
@@ -37,13 +44,15 @@ router.post('/', async (request: BaseRequest, response: UserLoginResponse) => {
   const { isExist, user } = await UsersService.alreadyExists(username)
   if (!isExist || !user) {
     response.status(400).json({
-      message: 'Username does not exist.'
+      message: t('Username.NotExist')
     })
     return
   }
 
   if (!(await UsersService.passwordEquals(password, user.password))) {
-    response.status(400).json({ message: 'Password is incorrect.' })
+    response.status(400).json({
+      message: t('Password.Incorrect')
+    })
     return
   }
 
@@ -55,7 +64,7 @@ router.post('/', async (request: BaseRequest, response: UserLoginResponse) => {
   const accessToken = JWTManager.generateAccessToken(jwtUserModel)
   if (!accessToken) {
     response.status(401).json({
-      message: 'Error generating token.'
+      message: t('Token.Generate.Failed')
     })
     return
   }
@@ -64,7 +73,8 @@ router.post('/', async (request: BaseRequest, response: UserLoginResponse) => {
     data: {
       user: UsersService.filterSafeUserInfo(user),
       accessToken
-    }
+    },
+    message: t('Login.Success')
   })
 })
 

@@ -1,10 +1,10 @@
 import bodyParser from 'body-parser'
-import type { Express } from 'express'
+import type { Express, Request } from 'express'
 import express from 'express'
 import path from 'path'
 
 import { fileStorageRegister } from '@/base'
-import { internalServerErrorHandler, morganLogger, notFoundHandler, validateToken } from '@/middlewares'
+import { internalServerErrorHandler, morganLogger, notFoundHandler, processLang, validateToken } from '@/middlewares'
 import routes from '@/routes'
 import { GlobalFileStorageConfig } from '@/shared'
 
@@ -15,6 +15,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(processLang)
 
 const storageFolder = GlobalFileStorageConfig.FILE_STORAGE_PATH
 
@@ -32,6 +33,11 @@ routes.forEach((route) => {
   } else {
     app.use(route.path, route.router)
   }
+})
+
+app.use('/', (req: Request, res) => {
+  const { t } = req
+  res.status(200).send(t('Welcome'))
 })
 
 // 404 handler

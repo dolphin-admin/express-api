@@ -11,6 +11,7 @@ officedocument
 openxmlformats
 presentationml
 recallwei
+Signup
 spreadsheetml
 Timestamptz
 wordprocessingml
