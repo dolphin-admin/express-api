@@ -35,6 +35,7 @@ export default {
         verifiedResult = undefined
       }
     })
+
     return verifiedResult
   }
 }

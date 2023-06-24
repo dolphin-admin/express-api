@@ -41,9 +41,9 @@ router.get('/', async (request: Request, response: BasePageResponse<UserSafeMode
   })
 })
 
-router.get('/:id', async (request: Request, response: BaseResponse<User>) => {
+router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<User>) => {
   const { t } = request
-  const id = Number(request.params.id)
+  const id = parseInt(request.params.id, 10)
   const user = await UsersService.getUserById(id)
   if (user) {
     response.status(200).json({
@@ -155,9 +155,9 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
   }
 })
 
-router.put('/:id', async (request: Request, response: Response) => {
+router.put('/:id(\\d+)', async (request: Request, response: Response) => {
   const { t } = request
-  const id = Number(request.params.id)
+  const id = parseInt(request.params.id, 10)
 
   if (!id) {
     response.status(400).json({
@@ -197,9 +197,9 @@ router.put('/:id', async (request: Request, response: Response) => {
   }
 })
 
-router.delete('/:id', async (request: Request, response: BaseResponse) => {
+router.delete('/:id(\\d+)', async (request: Request, response: BaseResponse) => {
   const { t } = request
-  const id = Number(request.params.id)
+  const id = parseInt(request.params.id, 10)
   if (!id) {
     response.status(400).json({
       message: t('User.ID.Require')

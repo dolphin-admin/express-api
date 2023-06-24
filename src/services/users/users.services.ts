@@ -35,10 +35,10 @@ export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel>
   }
 }
 
-export const getUserById = async (_: number): Promise<User | null> =>
+export const getUserById = async (id: number): Promise<User | null> =>
   PrismaQuery.user.findFirst({
     where: {
-      id: 1,
+      id,
       verified: true,
       enabled: true,
       ...PrismaAction.notDeleted()
