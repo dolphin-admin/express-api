@@ -22,7 +22,6 @@ export const validateToken = async (request: Request, response: BaseResponse, ne
   const userId = verifiedResult.id
 
   const user = await UsersService.getUserById(userId)
-
   if (user) {
     request.currentUser = user
   }

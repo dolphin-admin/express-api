@@ -56,6 +56,21 @@ router.get('/:id', async (request: Request, response: BaseResponse<User>) => {
   }
 })
 
+router.get('/info', async (request: Request, response: BaseResponse<User>) => {
+  const { t } = request
+
+  if (!request.currentUser) {
+    response.status(404).json({
+      message: t('User.NotExist')
+    })
+    return
+  }
+
+  response.status(200).json({
+    data: request.currentUser
+  })
+})
+
 router.post('/', async (request: Request, response: UserSignupResponse) => {
   const { t } = request
   const { username, password, confirmPassword } = request.body as UserSignupInputModel
