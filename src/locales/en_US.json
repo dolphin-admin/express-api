@@ -1,5 +1,8 @@
 {
   "Welcome": "Welcome to Dolphin Admin!",
+  "Router": {
+    "NotExist": "API or assets Not Exist."
+  },
   "Page": {
     "Require": "PageNum and PageSize are required.",
     "Invalid": "PageNum and PageSize must be numbers."
