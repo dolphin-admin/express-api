@@ -1,5 +1,5 @@
-import type { User } from '@prisma/client'
-import type { Request, Response, Router } from 'express'
+import { Prisma } from '@prisma/client'
+import type { Request, Router } from 'express'
 import express from 'express'
 
 import type { JWTUserModel } from '@/core'
@@ -13,7 +13,6 @@ const router: Router = express.Router()
 router.get('/', async (request: Request, response: BasePageResponse<UserSafeModel[]>) => {
   const { t } = request
   const { pageNum, pageSize } = request.query
-
   if (!pageNum || !pageSize) {
     response.status(400).json({
       message: t('Page.Require')
@@ -41,13 +40,14 @@ router.get('/', async (request: Request, response: BasePageResponse<UserSafeMode
   })
 })
 
-router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<User>) => {
+router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSafeModel>) => {
   const { t } = request
   const id = parseInt(request.params.id, 10)
+
   const user = await UsersService.getUserById(id)
   if (user) {
     response.status(200).json({
-      data: user
+      data: UsersService.filterSafeUserInfo(user)
     })
   } else {
     response.status(404).json({
@@ -56,9 +56,8 @@ router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<User>) 
   }
 })
 
-router.get('/info', async (request: Request, response: BaseResponse<User>) => {
+router.get('/info', async (request: Request, response: BaseResponse<UserSafeModel>) => {
   const { t } = request
-
   if (!request.currentUser) {
     response.status(404).json({
       message: t('User.NotExist')
@@ -67,13 +66,20 @@ router.get('/info', async (request: Request, response: BaseResponse<User>) => {
   }
 
   response.status(200).json({
-    data: request.currentUser
+    data: UsersService.filterSafeUserInfo(request.currentUser)
   })
 })
 
 router.post('/', async (request: Request, response: UserSignupResponse) => {
   const { t } = request
   const { username, password, confirmPassword } = request.body as UserSignupInputModel
+
+  if (!username?.trim()) {
+    response.status(400).json({
+      message: t('Username.Require')
+    })
+    return
+  }
 
   if (!password?.trim()) {
     response.status(400).json({
@@ -155,10 +161,9 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
   }
 })
 
-router.put('/:id(\\d+)', async (request: Request, response: Response) => {
+router.put('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSafeModel>) => {
   const { t } = request
   const id = parseInt(request.params.id, 10)
-
   if (!id) {
     response.status(400).json({
       message: t('User.ID.Require')
@@ -170,7 +175,7 @@ router.put('/:id(\\d+)', async (request: Request, response: Response) => {
     request.body as UserUpdateInputBaseModel
 
   try {
-    await UsersService.updateUser(
+    const user = await UsersService.updateUser(
       id,
       {
         email,
@@ -186,10 +191,26 @@ router.put('/:id(\\d+)', async (request: Request, response: Response) => {
       },
       { request }
     )
+    if (!user) {
+      response.status(404).json({
+        message: t('User.NotExist')
+      })
+      return
+    }
+
     response.status(200).json({
+      data: UsersService.filterSafeUserInfo(user),
       message: t('User.Updated')
     })
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        response.status(404).json({
+          message: t('User.NotExist')
+        })
+      }
+      return
+    }
     console.log(error)
     response.status(500).json({
       message: t('User.UpdateFailed')
@@ -208,11 +229,26 @@ router.delete('/:id(\\d+)', async (request: Request, response: BaseResponse) => 
   }
 
   try {
-    await UsersService.deleteUser(id, { request })
+    const user = await UsersService.deleteUser(id, { request })
+    if (!user) {
+      response.status(404).json({
+        message: t('User.NotExist')
+      })
+      return
+    }
+
     response.status(200).json({
       message: t('User.Deleted')
     })
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        response.status(404).json({
+          message: t('User.NotExist')
+        })
+      }
+      return
+    }
     console.log(error)
     response.status(500).json({
       message: t('User.DeleteFailed')

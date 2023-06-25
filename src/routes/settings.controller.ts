@@ -58,6 +58,7 @@ router.get('/batch', async (request: Request, response: BaseResponse<Setting[]>)
 router.get('/:key', async (request: Request, response: BaseResponse<Setting>) => {
   const { t } = request
   const { key } = request.params
+
   const setting = await SettingsService.getSettingByKey(key)
   if (setting) {
     response.status(200).json({
