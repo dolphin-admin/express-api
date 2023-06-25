@@ -22,8 +22,7 @@ const storageFolder = GlobalFileStorageConfig.FILE_STORAGE_PATH
 fileStorageRegister(storageFolder)
 
 // Static files setup
-app.use('/static', express.static(path.join(__dirname, './static')))
-app.use(`/${storageFolder}`, express.static(path.join(__dirname, `../${storageFolder}`)))
+app.use(`/${storageFolder}`, express.static(path.resolve(__dirname, `../${storageFolder}`)))
 
 // Init routes
 routes.forEach((route) => {
@@ -35,7 +34,7 @@ routes.forEach((route) => {
   }
 })
 
-app.use('/', (req: Request, res) => {
+app.get('/', (req: Request, res) => {
   const { t } = req
   res.status(200).send(t('Welcome'))
 })
