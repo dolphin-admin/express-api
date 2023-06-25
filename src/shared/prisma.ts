@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 
+import { GlobalConfig } from './config'
+
 interface CustomNodeJSGlobal extends Global {
   PrismaQuery: PrismaClient
 }
@@ -9,7 +11,7 @@ declare const global: CustomNodeJSGlobal
 export const PrismaQuery: PrismaClient =
   global.PrismaQuery ||
   new PrismaClient({
-    log: ['query', 'info', 'warn', 'error'],
+    log: GlobalConfig.IS_DEVELOPMENT ? ['query', 'info', 'warn', 'error'] : ['query', 'info', 'warn', 'error'],
     errorFormat: 'pretty'
   })
 
@@ -17,7 +19,7 @@ export const PrismaQuery: PrismaClient =
 PrismaQuery.$use(async (params, next) => {
   if (params.action === 'update' || params.action === 'updateMany') {
     // eslint-disable-next-line no-param-reassign
-    params.args.data.updateAt = new Date().toISOString()
+    params.args.data.updatedAt = new Date().toISOString()
   }
   const before = Date.now()
   const result = await next(params)
@@ -26,7 +28,7 @@ PrismaQuery.$use(async (params, next) => {
   return result
 })
 
-if (process.env.NODE_ENV === 'development') {
+if (GlobalConfig.IS_DEVELOPMENT) {
   global.PrismaQuery = PrismaQuery
 }
 
