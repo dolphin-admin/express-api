@@ -75,7 +75,7 @@ model Auth {
   updatedBy   String?   @map("updated_by") @db.VarChar(255)
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
   deletedBy   String?   @map("deleted_by") @db.VarChar(255)
-  User        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
   userId      Int       @map("user_id")
   userUuid    String    @map("user_uuid") @db.VarChar(1000)
 
@@ -97,4 +97,28 @@ model Setting {
   deletedBy   String?   @map("deleted_by") @db.VarChar(255)
 
   @@map("setting")
+}
+
+model Menu {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @db.VarChar(1000)
+  name      String    @unique @db.VarChar(1000)
+  key       String?   @unique @db.VarChar(1000)
+  labelKey  String?   @map("label_key") @db.VarChar(1000)
+  iconKey   String?   @map("icon_key") @db.VarChar(1000)
+  type      Int?
+  enabled   Boolean   @default(true)
+  sortOrder Int?      @map("sort_order")
+  remark    String?   @db.VarChar(1500)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy String?   @map("created_by") @db.VarChar(255)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy String?   @map("updated_by") @db.VarChar(255)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy String?   @map("deleted_by") @db.VarChar(255)
+  parent    Menu?     @relation("ChildMenus", fields: [parentId], references: [id])
+  parentId  Int?      @map("parent_id")
+  children  Menu[]    @relation("ChildMenus")
+
+  @@map("menu")
 }
