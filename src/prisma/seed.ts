@@ -1,8 +1,8 @@
 import { randAvatar, randFullAddress, randPastDate, randPhoneNumber } from '@ngneat/falso'
 import type { Prisma } from '@prisma/client'
-import { Gender, PrismaClient, Role } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
-import { batchPrimaryLog, errorLog, generateUUID, getCurrentTime } from '@/shared'
+import { batchPrimaryLog, errorLog, getCurrentTime } from '@/shared'
 
 const prisma = new PrismaClient()
 
@@ -10,18 +10,16 @@ const CURRENT_DATE = new Date().toISOString()
 const SEED_USER = 'Admin'
 
 const defaultUser: Prisma.UserCreateInput = {
-  uuid: generateUUID(),
   username: 'Admin',
   password: '$2b$10$kZEDiHCgDhFmX7/sKwYm1ORMK99FNk/QQgebcwBflKrAWKGA.D46W',
   name: 'Admin',
-  gender: Gender.UNDEFINED,
   phoneNumber: randPhoneNumber(),
   birthDate: randPastDate(),
   address: randFullAddress(),
   avatarUrl: randAvatar(),
   verified: true,
   enabled: true,
-  roles: Array.of(Role.ADMIN),
+  roles: [],
   createdAt: CURRENT_DATE,
   createdBy: SEED_USER
 }
