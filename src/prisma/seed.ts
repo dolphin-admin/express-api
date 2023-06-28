@@ -1,32 +1,73 @@
-import { randAvatar, randFullAddress, randPastDate, randPhoneNumber } from '@ngneat/falso'
+import { randAvatar } from '@ngneat/falso'
+import { hash } from '@node-rs/bcrypt'
 import type { Prisma } from '@prisma/client'
 import { PrismaClient } from '@prisma/client'
 
+import { BuiltInRole, builtInRolePermissions } from '@/core'
 import { batchPrimaryLog, errorLog, getCurrentTime } from '@/shared'
 
 const prisma = new PrismaClient()
 
 const CURRENT_DATE = new Date().toISOString()
-const SEED_USER = 'Admin'
-
-const defaultUser: Prisma.UserCreateInput = {
-  username: 'Admin',
-  password: '$2b$10$kZEDiHCgDhFmX7/sKwYm1ORMK99FNk/QQgebcwBflKrAWKGA.D46W',
-  name: 'Admin',
-  phoneNumber: randPhoneNumber(),
-  birthDate: randPastDate(),
-  address: randFullAddress(),
-  avatarUrl: randAvatar(),
-  verified: true,
-  enabled: true,
-  roles: [],
-  createdAt: CURRENT_DATE,
-  createdBy: SEED_USER
-}
+const SEED_USERNAME = 'Admin'
+const SEED_PASSWORD = '123456'
 
 const seed = async () => {
-  await prisma.user.create({
-    data: defaultUser
+  const defaultUser: Prisma.UserCreateInput = {
+    username: SEED_USERNAME,
+    password: await hash(SEED_PASSWORD, 10),
+    avatarUrl: randAvatar(),
+    verified: true,
+    enabled: true,
+    createdAt: CURRENT_DATE
+  }
+
+  // const role = await prisma.role.create({
+  //   data: {
+  //     name: 'Moderator',
+  //     permissions: {
+  //       // 将 Moderators 角色分配给两个现有权限："CreatePost" 和 "EditPost"。
+  //       connectOrCreate: [
+  //         { where: { name: 'CreatePost' }, create: { name: 'CreatePost' } },
+  //         { where: { name: 'EditPost' }, create: { name: 'EditPost' } }
+  //       ]
+  //     }
+  //   }
+  // })
+
+  builtInRolePermissions.reduce(async (prevPromise, rolePermission) => {
+    await prevPromise
+    const { role, permissions } = rolePermission
+
+    await prisma.role.create({
+      data: {
+        key: role.key,
+        permissions: {
+          connectOrCreate: permissions.map((permission) => ({
+            where: { name: permission },
+            create: { name: permission }
+          }))
+        }
+      }
+    })
+  }, Promise.resolve())
+
+  const user = await prisma.user.create({
+    data: {
+      ...defaultUser,
+      userRoles: {
+        connectOrCreate: [
+          {
+            where: {
+              key: BuiltInRole.SuperAdmin
+            },
+            create: {
+              key: BuiltInRole.SuperAdmin
+            }
+          }
+        ]
+      }
+    }
   })
 }
 
@@ -34,7 +75,7 @@ seed()
   .then(async () => {
     batchPrimaryLog([
       `[prisma - ${getCurrentTime('HH:mm:ss')}] 🍀 Seed your db successfully!`,
-      `[prisma - ${getCurrentTime('HH:mm:ss')}] 🔒 Created the default user: ${defaultUser.username}`
+      `[prisma - ${getCurrentTime('HH:mm:ss')}] 🔒 Created the default user: ${SEED_USERNAME}`
     ])
   })
   .catch(async (e) => {
