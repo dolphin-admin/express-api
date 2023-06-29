@@ -49,28 +49,27 @@ export const getSettingsByKeys = async (keys: string[]) =>
 
 export const createSetting = async (setting: SettingsInputModel, options?: ServiceOptions) => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.setting.create({
     data: {
       ...setting,
-      uuid: generateUUID(),
       enabled: true,
       value: setting.value ?? Prisma.DbNull,
-      createdBy: currentUsername
+      createdBy: currentUser?.id
     }
   })
 }
 
 export const createSettings = async (settings: SettingsInputModel[], options?: ServiceOptions) => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.setting.createMany({
     data: settings.map((setting) => ({
       ...setting,
       uuid: generateUUID(),
       enabled: true,
       value: setting.value ?? Prisma.DbNull,
-      createdBy: currentUsername
+      createdBy: currentUser?.id
     }))
   })
 }
@@ -78,7 +77,7 @@ export const createSettings = async (settings: SettingsInputModel[], options?: S
 export const updateSettingByKey = async (setting: SettingsInputModel, options?: ServiceOptions) => {
   const { key, value, description } = setting
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.setting.update({
     where: {
       key
@@ -86,50 +85,50 @@ export const updateSettingByKey = async (setting: SettingsInputModel, options?: 
     data: {
       value: value ?? Prisma.DbNull,
       description,
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }
 
 export const deleteSettingByKey = async (key: string, options?: ServiceOptions) => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.setting.update({
     where: {
       key
     },
     data: {
-      updatedBy: currentUsername,
+      updatedBy: currentUser?.id,
       deletedAt: new Date().toISOString(),
-      deletedBy: currentUsername
+      deletedBy: currentUser?.id
     }
   })
 }
 
 export const banSettingByKey = async (key: string, options?: ServiceOptions) => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.setting.update({
     where: {
       key
     },
     data: {
       enabled: false,
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }
 
 export const enableSettingByKey = async (key: string, options?: ServiceOptions) => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.setting.update({
     where: {
       key
     },
     data: {
       enabled: true,
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }

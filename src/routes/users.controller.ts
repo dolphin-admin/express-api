@@ -6,6 +6,7 @@ import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserSafeModel, UserSignupInputModel, UserSignupResponse, UserUpdateInputBaseModel } from '@/services'
 import { UsersService } from '@/services'
+import { passwordHash } from '@/shared'
 import type { BasePageResponse, BaseResponse, PageRequestModel } from '@/types'
 
 const router: Router = express.Router()
@@ -127,7 +128,7 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
     const user = await UsersService.createUser(
       {
         username,
-        password: await UsersService.passwordHash(password)
+        password: await passwordHash(password)
       },
       { request }
     )
@@ -135,8 +136,7 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
     // Generate JWT token
     const jwtUserModel: JWTUserModel = {
       id: user.id,
-      username: user.username,
-      roles: user.roles
+      username: user.username
     }
     const accessToken = JWTManager.generateAccessToken(jwtUserModel)
     if (!accessToken) {

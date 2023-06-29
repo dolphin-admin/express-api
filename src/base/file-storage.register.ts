@@ -2,7 +2,7 @@ import fs from 'fs'
 
 import { primaryLog } from '@/shared'
 
-export const fileStorageRegister = (storageFolder: string) => {
+const fileStorageRegister = (storageFolder: string) => {
   // Create file storage folder if not exists
   try {
     fs.accessSync(storageFolder)
@@ -11,3 +11,5 @@ export const fileStorageRegister = (storageFolder: string) => {
     primaryLog('[File Storage] File storage folder created.')
   }
 }
+
+export default fileStorageRegister

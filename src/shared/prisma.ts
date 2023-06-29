@@ -45,3 +45,14 @@ export class PrismaAction {
     }
   })
 }
+
+export const SEED_SUPER_ADMIN_USERNAME = 'SuperAdmin'
+export const SEED_SUPER_ADMIN_PASSWORD = '123456'
+
+export const SEED_SUPER_ADMIN_ROLE_KEY = 'SUPER_ADMIN'
+export const SEED_SUPER_ADMIN_ROLE_NAME_EN = 'Super Admin'
+export const SEED_SUPER_ADMIN_ROLE_NAME_ZH = '超级管理员'
+
+export const SEED_ENTER_SYSTEM_PERMISSION_KEY = 'ENTER_SYSTEM'
+export const SEED_ENTER_SYSTEM_PERMISSION_NAME_EN = 'Enter System'
+export const SEED_ENTER_SYSTEM_PERMISSION_NAME_ZH = '进入系统'
