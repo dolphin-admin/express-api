@@ -19,16 +19,13 @@ import {
 
 const prisma = new PrismaClient()
 
-const getCurrentDate = () => new Date().toISOString()
-
 const seed = async () => {
   const defaultUser: Prisma.UserCreateInput = {
     username: SEED_SUPER_ADMIN_USERNAME,
     password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
     avatarUrl: randAvatar(),
     verified: true,
-    enabled: true,
-    createdAt: getCurrentDate()
+    enabled: true
   }
 
   const existingSuperAdminUser = await prisma.user.findUnique({
@@ -64,7 +61,6 @@ const seed = async () => {
         nameZh: SEED_ENTER_SYSTEM_PERMISSION_NAME_ZH,
         isBuiltIn: true,
         enabled: true,
-        createdAt: getCurrentDate(),
         createdBy: superAdminUser.id
       }
     })
@@ -93,7 +89,6 @@ const seed = async () => {
         nameZh: SEED_SUPER_ADMIN_ROLE_NAME_ZH,
         isBuiltIn: true,
         enabled: true,
-        createdAt: getCurrentDate(),
         createdBy: superAdminUser.id
       }
     })
@@ -117,7 +112,6 @@ const seed = async () => {
       data: {
         user: { connect: { id: superAdminUser.id } },
         role: { connect: { id: superAdminRole.id } },
-        createdAt: getCurrentDate(),
         createdBy: superAdminUser.id
       }
     })
@@ -149,7 +143,6 @@ const seed = async () => {
             data: {
               role: { connect: { id: superAdminRole.id } },
               permission: { connect: { id: permissionToConnect.id } },
-              createdAt: getCurrentDate(),
               createdBy: superAdminUser.id
             }
           })

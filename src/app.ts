@@ -13,7 +13,6 @@ const storageFolder = GlobalFileStorageConfig.FILE_STORAGE_PATH
 const app: Express = express()
 
 AppRegister.fileStorageRegister(storageFolder)
-AppRegister.rolePermissionRegister()
 
 app.use(morganLogger)
 app.use(express.json())

@@ -2,6 +2,7 @@ import figlet from 'figlet'
 import gradient from 'gradient-string'
 import http from 'http'
 
+import { AppRegister } from '@/base'
 import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig } from '@/shared'
 
 import app from './app'
@@ -13,7 +14,7 @@ app.set('port', PORT)
 const Server = http.createServer(app)
 
 const showAppInitLog = (port: string) => {
-  // console.clear()
+  console.clear()
   figlet(GlobalAppConfig.APP_NAME, (err, data) => {
     if (err) {
       console.log('Something went wrong...')
@@ -34,7 +35,7 @@ const showAppInitLog = (port: string) => {
   })
 }
 
-Server.listen(PORT, () => {
+Server.listen(PORT, async () => {
   const serverInfo = Server.address()
   let port = ''
   if (serverInfo) {
@@ -45,5 +46,6 @@ Server.listen(PORT, () => {
     }
   }
 
+  await AppRegister.rolePermissionRegister()
   showAppInitLog(port)
 })

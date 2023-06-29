@@ -1,9 +1,9 @@
-import { BuiltInPermission, getBuiltInPermissionItem, getBuiltInPermissionItems } from '../permission'
+import { BuiltInPermission, getAllBuiltInPermissions } from '../permission'
 import type { BuiltInRoleItemMeta, BuiltInRolePermission } from './role.type'
 import { BuiltInRole } from './role.type'
 
 export const builtInRoleMetaMap = new Map<BuiltInRole, BuiltInRoleItemMeta>([
-  [BuiltInRole.SuperAdmin, { nameEn: 'Super Admin', nameZh: '超级管理员' }],
+  [BuiltInRole.Super_Admin, { nameEn: 'Super Admin', nameZh: '超级管理员' }],
   [BuiltInRole.Admin, { nameEn: 'Admin', nameZh: '管理员' }],
   [BuiltInRole.Guest, { nameEn: 'Guest', nameZh: '访客' }]
 ])
@@ -13,27 +13,18 @@ export const getBuiltInRoleItem = (key: BuiltInRole) => ({
   ...(builtInRoleMetaMap.get(key) as BuiltInRoleItemMeta)
 })
 
-const getAllPermissionItems = () => Object.values(BuiltInPermission).map((key) => getBuiltInPermissionItem(key))
+export const getAllBuiltInRoles = () => Object.values(BuiltInRole).map((key) => getBuiltInRoleItem(key))
 
-export const builtInRolePermissions: BuiltInRolePermission[] = [
-  {
-    role: getBuiltInRoleItem(BuiltInRole.SuperAdmin),
-    permissions: getAllPermissionItems()
-  },
-  {
-    role: getBuiltInRoleItem(BuiltInRole.Admin),
-    permissions: getBuiltInPermissionItems([
-      BuiltInPermission.Login,
-      BuiltInPermission.UserManagement,
-      BuiltInPermission.RoleManagement,
-      BuiltInPermission.PermissionManagement,
-      BuiltInPermission.MenuManagement
-    ])
-  },
-  {
-    role: getBuiltInRoleItem(BuiltInRole.Guest),
-    permissions: getBuiltInPermissionItems([BuiltInPermission.Login])
-  }
-]
+export const builtInRolePermissions: BuiltInRolePermission = {
+  [BuiltInRole.Super_Admin]: getAllBuiltInPermissions().map((permission) => permission.key),
+  [BuiltInRole.Admin]: [
+    BuiltInPermission.ENTER_SYSTEM,
+    BuiltInPermission.User_Management,
+    BuiltInPermission.Role_Management,
+    BuiltInPermission.Permission_Management,
+    BuiltInPermission.Menu_Management
+  ],
+  [BuiltInRole.Guest]: [BuiltInPermission.ENTER_SYSTEM]
+}
 
 export default {}

@@ -1,9 +1,9 @@
 export enum BuiltInPermission {
-  Login = 'SYSTEM:LOGIN',
-  UserManagement = 'USER:MANAGEMENT',
-  RoleManagement = 'ROLE:MANAGEMENT',
-  PermissionManagement = 'PERMISSION:MANAGEMENT',
-  MenuManagement = 'MENU:MANAGEMENT'
+  ENTER_SYSTEM = 'ENTER_SYSTEM',
+  User_Management = 'USER_MANAGEMENT',
+  Role_Management = 'ROLE_MANAGEMENT',
+  Permission_Management = 'PERMISSION_MANAGEMENT',
+  Menu_Management = 'MENU_MANAGEMENT'
 }
 
 export interface BuiltInPermissionItemMeta {

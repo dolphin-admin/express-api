@@ -1,7 +1,7 @@
-import type { BuiltInPermissionItem } from '../permission'
+import type { BuiltInPermission } from '../permission'
 
 export enum BuiltInRole {
-  SuperAdmin = 'SUPER:ADMIN',
+  Super_Admin = 'SUPER_ADMIN',
   Admin = 'ADMIN',
   Guest = 'GUEST'
 }
@@ -15,7 +15,4 @@ export interface BuiltInRoleItem extends BuiltInRoleItemMeta {
   key: BuiltInRole
 }
 
-export interface BuiltInRolePermission {
-  role: BuiltInRoleItem
-  permissions: BuiltInPermissionItem[]
-}
+export type BuiltInRolePermission = Record<BuiltInRole, BuiltInPermission[]>
