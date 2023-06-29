@@ -1,8 +1,6 @@
-import { compare, hash } from '@node-rs/bcrypt'
 import type { User } from '@prisma/client'
-import { Role } from '@prisma/client'
 
-import { generateUUID, PrismaAction, PrismaQuery } from '@/shared'
+import { PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
 import type { UserExistModel, UserInputBaseModel, UserSafeModel, UsersModel, UserUpdateModel } from './users.models'
@@ -47,44 +45,42 @@ export const getUserById = async (id: number): Promise<User | null> =>
 
 export const createUser = async (user: UserInputBaseModel, options?: ServiceOptions): Promise<User> => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.user.create({
     data: {
       ...user,
-      uuid: generateUUID(),
       verified: true,
       enabled: true,
-      roles: [Role.USER],
-      createdBy: currentUsername
+      createdBy: currentUser?.id
     }
   })
 }
 
 export const updateUser = async (id: number, user: UserUpdateModel, options?: ServiceOptions): Promise<User | null> => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.user.update({
     where: {
       id
     },
     data: {
       ...user,
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }
 
 export const deleteUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.user.update({
     where: {
       id
     },
     data: {
-      updatedBy: currentUsername,
+      updatedBy: currentUser?.id,
       deletedAt: new Date().toISOString(),
-      deletedBy: currentUsername
+      deletedBy: currentUser?.id
     }
   })
 }
@@ -107,62 +103,44 @@ export const filterSafeUserInfo = (user: User): UserSafeModel => {
   return filteredUser
 }
 
-export const passwordHash = async (password: string) => hash(password, 10)
-
-export const passwordEquals = async (password: string, hashedPassword: string) => compare(password, hashedPassword)
-
 export const verifyUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.user.update({
     where: {
       id
     },
     data: {
       verified: true,
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }
 
 export const banUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.user.update({
     where: {
       id
     },
     data: {
       enabled: false,
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }
 
 export const enableUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
+  const currentUser = request?.currentUser
   return PrismaQuery.user.update({
     where: {
       id
     },
     data: {
       enabled: true,
-      updatedBy: currentUsername
-    }
-  })
-}
-
-export const authorizeUse = async (id: number, options?: ServiceOptions): Promise<User | null> => {
-  const { request } = options || {}
-  const currentUsername = request?.currentUser?.username
-  return PrismaQuery.user.update({
-    where: {
-      id
-    },
-    data: {
-      roles: [Role.USER, Role.ADMIN],
-      updatedBy: currentUsername
+      updatedBy: currentUser?.id
     }
   })
 }

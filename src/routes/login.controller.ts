@@ -5,6 +5,7 @@ import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserLoginInputModel, UserLoginResponse } from '@/services'
 import { UsersService } from '@/services'
+import { passwordEquals } from '@/shared'
 
 const router: Router = express.Router()
 
@@ -49,7 +50,7 @@ router.post('/', async (request: Request, response: UserLoginResponse) => {
     return
   }
 
-  if (!(await UsersService.passwordEquals(password, user.password))) {
+  if (!(await passwordEquals(password, user.password))) {
     response.status(400).json({
       message: t('Password.Incorrect')
     })
@@ -58,8 +59,7 @@ router.post('/', async (request: Request, response: UserLoginResponse) => {
 
   const jwtUserModel: JWTUserModel = {
     id: user.id,
-    username: user.username,
-    roles: user.roles
+    username: user.username
   }
   const accessToken = JWTManager.generateAccessToken(jwtUserModel)
   if (!accessToken) {
