@@ -1,3 +1,3 @@
-import type { Menu } from '@prisma/client'
+import type { MenuItem } from '@prisma/client'
 
-export type MenuTreeModel = Menu[]
+export type MenuTreeModel = MenuItem[]

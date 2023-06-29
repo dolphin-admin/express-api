@@ -8,158 +8,186 @@ generator client {
   binaryTargets = ["native"]
 }
 
-enum AuthType {
-  GITHUB @map("github")
-  GOOGLE @map("google")
-
-  @@map("auth_type")
-}
-
 model User {
-  id          Int        @id @default(autoincrement())
-  createdAt   DateTime?  @default(now()) @map("created_at") @db.Timestamptz(3)
-  createdBy   Int?       @map("created_by")
-  updatedAt   DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  updatedBy   Int?       @map("updated_by")
-  deletedAt   DateTime?  @map("deleted_at") @db.Timestamptz(3)
-  deletedBy   Int?       @map("deleted_by")
-  username    String     @unique @db.VarChar(20)
-  password    String     @db.VarChar(255)
-  email       String?    @unique @db.VarChar(30)
-  phoneNumber String?    @map("phone_number") @db.VarChar(20)
-  name        String?    @db.VarChar(20)
-  firstName   String?    @map("first_name") @db.VarChar(255)
-  lastName    String?    @map("last_name") @db.VarChar(255)
-  nickName    String?    @map("nick_name") @db.VarChar(255)
-  avatarUrl   String?    @map("avatar_url") @db.VarChar(1000)
-  gender      String?    @db.VarChar(10)
-  country     String?    @db.VarChar(50)
-  province    String?    @db.VarChar(50)
-  city        String?    @db.VarChar(50)
-  address     String?    @db.VarChar(255)
-  biography   String?    @db.Text
-  birthDate   DateTime?  @map("birth_date") @db.Date
-  verified    Boolean    @default(false)
-  enabled     Boolean    @default(true)
-  auths       Auth[]
-  userRoles   UserRole[]
+  id          Int       @id @default(autoincrement())
+  username    String    @unique @db.VarChar(20)
+  password    String    @db.VarChar(255)
+  email       String?   @unique @db.VarChar(30)
+  phoneNumber String?   @map("phone_number") @db.VarChar(20)
+  name        String?   @db.VarChar(20)
+  firstName   String?   @map("first_name") @db.VarChar(255)
+  lastName    String?   @map("last_name") @db.VarChar(255)
+  nickName    String?   @map("nick_name") @db.VarChar(255)
+  avatarUrl   String?   @map("avatar_url") @db.VarChar(1000)
+  gender      String?   @db.VarChar(10)
+  country     String?   @db.VarChar(50)
+  province    String?   @db.VarChar(50)
+  city        String?   @db.VarChar(50)
+  address     String?   @db.VarChar(255)
+  biography   String?   @db.Text
+  birthDate   DateTime? @map("birth_date") @db.Date
+  verified    Boolean   @default(false)
+  enabled     Boolean   @default(true)
 
-  @@map("user")
-}
+  auths Auth[]
 
-model Auth {
-  id        Int       @id @default(autoincrement())
+  userRoles UserRole[]
+
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
   createdBy Int?      @map("created_by")
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
   updatedBy Int?      @map("updated_by")
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
   deletedBy Int?      @map("deleted_by")
-  authType  AuthType  @map("auth_type")
+
+  @@map("system_user")
+}
+
+model Auth {
+  id        Int       @id @default(autoincrement())
+  authType  Int       @map("auth_type")
   token     String    @db.VarChar(255)
   expiresAt DateTime? @map("expires_at") @db.Timestamptz(3)
-  user      User      @relation(fields: [userId], references: [id])
-  userId    Int       @map("user_id")
 
-  @@map("auth")
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_auth")
 }
 
 model Role {
-  id              Int              @id @default(autoincrement())
-  createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamptz(3)
-  createdBy       Int?             @map("created_by")
-  updatedAt       DateTime?        @updatedAt @map("updated_at") @db.Timestamptz(3)
-  updatedBy       Int?             @map("updated_by")
-  deletedAt       DateTime?        @map("deleted_at") @db.Timestamptz(3)
-  deletedBy       Int?             @map("deleted_by")
-  key             String           @unique @db.VarChar(50)
-  nameEn          String?          @map("name_en") @db.VarChar(50)
-  nameZh          String?          @map("name_zh") @db.VarChar(50)
-  isBuiltIn       Boolean          @default(false) @map("is_built_in")
-  enabled         Boolean          @default(true)
-  userRoles       UserRole[]
+  id        Int     @id @default(autoincrement())
+  key       String  @unique @db.VarChar(50)
+  nameEn    String? @map("name_en") @db.VarChar(50)
+  nameZh    String? @map("name_zh") @db.VarChar(50)
+  isBuiltIn Boolean @default(false) @map("is_built_in")
+  enabled   Boolean @default(true)
+
+  userRoles UserRole[]
+
   rolePermissions RolePermission[]
 
-  @@map("role")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_role")
 }
 
 model UserRole {
+  id Int @id @default(autoincrement())
+
   user   User @relation(fields: [userId], references: [id])
   userId Int
+
   role   Role @relation(fields: [roleId], references: [id])
   roleId Int
 
-  @@id([userId, roleId])
-  @@map("user_role")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_user_role")
 }
 
 model Permission {
-  id              Int              @id @default(autoincrement())
-  createdAt       DateTime?        @default(now()) @map("created_at") @db.Timestamptz(3)
-  createdBy       Int?             @map("created_by")
-  updatedAt       DateTime?        @updatedAt @map("updated_at") @db.Timestamptz(3)
-  updatedBy       Int?             @map("updated_by")
-  deletedAt       DateTime?        @map("deleted_at") @db.Timestamptz(3)
-  deletedBy       Int?             @map("deleted_by")
-  key             String           @unique @db.VarChar(50)
-  nameEn          String?          @map("name_en") @db.VarChar(50)
-  nameZh          String?          @map("name_zh") @db.VarChar(50)
-  isBuiltIn       Boolean          @default(false) @map("is_built_in")
-  enabled         Boolean          @default(true)
-  rolePermissions RolePermission[]
-  menuItems       MenuItem[]
+  id        Int     @id @default(autoincrement())
+  key       String  @unique @db.VarChar(50)
+  nameEn    String? @map("name_en") @db.VarChar(50)
+  nameZh    String? @map("name_zh") @db.VarChar(50)
+  isBuiltIn Boolean @default(false) @map("is_built_in")
+  enabled   Boolean @default(true)
 
-  @@map("permission")
+  rolePermissions RolePermission[]
+
+  menuItems MenuItem[]
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_permission")
 }
 
 model RolePermission {
-  role         Role       @relation(fields: [roleId], references: [id])
-  roleId       Int
+  id Int @id @default(autoincrement())
+
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int
+
   permission   Permission @relation(fields: [permissionId], references: [id])
   permissionId Int
 
-  @@id([roleId, permissionId])
-  @@map("role_permission")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_role_permission")
 }
 
 model Setting {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  createdBy   Int?      @map("created_by")
-  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  updatedBy   Int?      @map("updated_by")
-  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
-  deletedBy   Int?      @map("deleted_by")
-  key         String    @unique @db.VarChar(255)
-  value       Json?     @db.Json
-  description String?   @db.Text
-  enabled     Boolean   @default(true)
+  id Int @id @default(autoincrement())
 
-  @@map("setting")
+  key         String  @unique @db.VarChar(255)
+  value       Json?   @db.Json
+  description String? @db.Text
+  enabled     Boolean @default(true)
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_setting")
 }
 
 model MenuItem {
-  id           Int         @id @default(autoincrement())
-  createdAt    DateTime?   @default(now()) @map("created_at") @db.Timestamptz(3)
-  createdBy    Int?        @map("created_by")
-  updatedAt    DateTime?   @updatedAt @map("updated_at") @db.Timestamptz(3)
-  updatedBy    Int?        @map("updated_by")
-  deletedAt    DateTime?   @map("deleted_at") @db.Timestamptz(3)
-  deletedBy    Int?        @map("deleted_by")
-  key          String      @unique @db.VarChar(50)
-  nameEn       String?     @map("name_en") @db.VarChar(50)
-  nameZh       String?     @map("name_zh") @db.VarChar(50)
-  url          String?     @db.VarChar(255)
-  icon         String?     @db.VarChar(50)
-  type         Int?
-  enabled      Boolean     @default(true)
-  sortOrder    Int?        @default(0) @map("sort_order")
-  remark       String?     @db.Text
-  parent       MenuItem?   @relation("MenuItemToMenuItem", fields: [parentId], references: [id])
-  parentId     Int?        @map("parent_id")
-  children     MenuItem[]  @relation("MenuItemToMenuItem")
+  id        Int     @id @default(autoincrement())
+  key       String  @unique @db.VarChar(50)
+  nameEn    String? @map("name_en") @db.VarChar(50)
+  nameZh    String? @map("name_zh") @db.VarChar(50)
+  url       String? @db.VarChar(255)
+  icon      String? @db.VarChar(50)
+  type      Int?
+  enabled   Boolean @default(true)
+  sortOrder Int?    @default(0) @map("sort_order")
+  remark    String? @db.Text
+
+  parent   MenuItem? @relation("MenuItemToMenuItem", fields: [parentId], references: [id])
+  parentId Int?      @map("parent_id")
+
+  children MenuItem[] @relation("MenuItemToMenuItem")
+
   permission   Permission? @relation(fields: [permissionId], references: [id])
   permissionId Int?        @map("permission_id")
 
-  @@map("menu_item")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  createdBy Int?      @map("created_by")
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_menu_item")
 }

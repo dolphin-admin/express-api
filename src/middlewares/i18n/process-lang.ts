@@ -67,5 +67,6 @@ export const processLang = (req: Request, res: Response, next: NextFunction) => 
     console.error(`Translation missing: key = ${key} , lang = ${lang} `)
     return key
   }
+
   next()
 }

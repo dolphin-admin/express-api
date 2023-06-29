@@ -13,7 +13,7 @@ app.set('port', PORT)
 const Server = http.createServer(app)
 
 const showAppInitLog = (port: string) => {
-  console.clear()
+  // console.clear()
   figlet(GlobalAppConfig.APP_NAME, (err, data) => {
     if (err) {
       console.log('Something went wrong...')
