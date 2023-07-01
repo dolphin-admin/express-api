@@ -4,8 +4,8 @@
     "NotExist": "接口或图片资源不存在"
   },
   "Page": {
-    "Require": "缺少必填参数：PageNum 和 PageSize",
-    "Invalid": "PageNum 和 PageSize 必须是数字类型"
+    "Require": "缺少必填参数：PageCount 和 PageSize",
+    "Invalid": "PageCount 和 PageSize 必须是数字类型"
   },
   "Username": {
     "Require": "用户名不能为空",
@@ -33,6 +33,10 @@
     "UpdateFailed": "用户更新失败",
     "Deleted": "用户删除成功",
     "DeleteFailed": "用户删除失败"
+  },
+  "Gender": {
+    "Male": "男",
+    "Female": "女"
   },
   "Key": {
     "Require": "Key 不能为空",

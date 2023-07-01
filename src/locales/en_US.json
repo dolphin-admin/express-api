@@ -4,8 +4,8 @@
     "NotExist": "API or assets Not Exist."
   },
   "Page": {
-    "Require": "PageNum and PageSize are required.",
-    "Invalid": "PageNum and PageSize must be numbers."
+    "Require": "PageCount and PageSize are required.",
+    "Invalid": "PageCount and PageSize must be numbers."
   },
   "Username": {
     "Require": "Username is required.",
@@ -33,6 +33,10 @@
     "UpdateFailed": "User update failed.",
     "Deleted": "User deleted.",
     "DeleteFailed": "User delete failed."
+  },
+  "Gender": {
+    "Male": "Male",
+    "Female": "Female"
   },
   "Key": {
     "Require": "Key is required.",

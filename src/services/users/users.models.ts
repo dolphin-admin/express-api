@@ -4,6 +4,10 @@ import type { BaseResponse, PageResponseModel } from '@/types'
 
 export type UserSafeModel = Omit<User, 'password'>
 
+export interface PageUserModel extends UserSafeModel {
+  genderLabel?: string
+}
+
 export type UsersModel = {
   users: User[]
 } & PageResponseModel
@@ -38,3 +42,15 @@ export type UserSignupResponse = BaseResponse<{
   user: UserSafeModel
   accessToken: string
 }>
+
+export enum Gender {
+  'FEMALE' = 0,
+  'MALE' = 1
+}
+
+type GenderLabelKey = 'Gender.Male' | 'Gender.Female'
+
+export const genderLabelKeyMap = new Map<number, GenderLabelKey>([
+  [0, 'Gender.Male'],
+  [1, 'Gender.Female']
+])

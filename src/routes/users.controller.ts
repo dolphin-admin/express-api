@@ -4,14 +4,20 @@ import express from 'express'
 
 import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
-import type { UserSafeModel, UserSignupInputModel, UserSignupResponse, UserUpdateInputBaseModel } from '@/services'
-import { UsersService } from '@/services'
+import type {
+  PageUserModel,
+  UserSafeModel,
+  UserSignupInputModel,
+  UserSignupResponse,
+  UserUpdateInputBaseModel
+} from '@/services'
+import { genderLabelKeyMap, UsersService } from '@/services'
 import { passwordHash } from '@/shared'
 import type { BasePageResponse, BaseResponse, PageRequestModel } from '@/types'
 
 const router: Router = express.Router()
 
-router.get('/', async (request: Request, response: BasePageResponse<UserSafeModel[]>) => {
+router.get('/', async (request: Request, response: BasePageResponse<PageUserModel[]>) => {
   const { t } = request
   const { pageCount, pageSize } = request.query
   if (!pageCount || !pageSize) {
@@ -36,7 +42,19 @@ router.get('/', async (request: Request, response: BasePageResponse<UserSafeMode
   const { users, ...pageResult } = await UsersService.getUsers(pageModel)
 
   response.status(200).json({
-    data: users.map((user) => UsersService.filterSafeUserInfo(user)),
+    data: users.map((user) => {
+      let genderLabel = ''
+      if (typeof user.gender === 'number') {
+        const genderLabelKey = genderLabelKeyMap.get(user.gender)
+        if (genderLabelKey) {
+          genderLabel = t(genderLabelKeyMap.get(user.gender)!)
+        }
+      }
+      return {
+        ...UsersService.filterSafeUserInfo(user),
+        genderLabel
+      }
+    }),
     ...pageResult
   })
 })
