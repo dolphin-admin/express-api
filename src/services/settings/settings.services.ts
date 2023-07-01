@@ -6,13 +6,13 @@ import type { PageRequestModel, ServiceOptions } from '@/types'
 import type { SettingsInputModel } from './settings.models'
 
 export const getSettings = async (pageModel: PageRequestModel) => {
-  const { pageNum, pageSize } = pageModel
+  const { pageCount, pageSize } = pageModel
 
   const settings = await PrismaQuery.setting.findMany({
     where: {
       ...PrismaAction.notDeleted()
     },
-    skip: (pageNum - 1) * pageSize,
+    skip: (pageCount - 1) * pageSize,
     take: pageSize
   })
 

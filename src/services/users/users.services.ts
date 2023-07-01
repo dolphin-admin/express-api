@@ -6,7 +6,7 @@ import type { PageRequestModel, ServiceOptions } from '@/types'
 import type { UserExistModel, UserInputBaseModel, UserSafeModel, UsersModel, UserUpdateModel } from './users.models'
 
 export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel> => {
-  const { pageNum, pageSize } = pageModel
+  const { pageCount, pageSize } = pageModel
 
   const users = await PrismaQuery.user.findMany({
     where: {
@@ -14,7 +14,7 @@ export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel>
       enabled: true,
       ...PrismaAction.notDeleted()
     },
-    skip: (pageNum - 1) * pageSize,
+    skip: (pageCount - 1) * pageSize,
     take: pageSize
   })
 

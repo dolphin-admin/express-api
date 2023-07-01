@@ -10,20 +10,20 @@ generator client {
 
 model User {
   id          Int       @id @default(autoincrement())
-  username    String    @unique @db.VarChar(20)
+  username    String    @unique @db.VarChar(30)
   password    String    @db.VarChar(255)
   email       String?   @unique @db.VarChar(30)
   phoneNumber String?   @map("phone_number") @db.VarChar(20)
-  name        String?   @db.VarChar(20)
-  firstName   String?   @map("first_name") @db.VarChar(255)
-  lastName    String?   @map("last_name") @db.VarChar(255)
-  nickName    String?   @map("nick_name") @db.VarChar(255)
+  name        String?   @db.VarChar(30)
+  firstName   String?   @map("first_name") @db.VarChar(30)
+  lastName    String?   @map("last_name") @db.VarChar(30)
+  nickName    String?   @map("nick_name") @db.VarChar(50)
   avatarUrl   String?   @map("avatar_url") @db.VarChar(1000)
-  gender      String?   @db.VarChar(10)
+  gender      Int?
   country     String?   @db.VarChar(50)
   province    String?   @db.VarChar(50)
   city        String?   @db.VarChar(50)
-  address     String?   @db.VarChar(255)
+  address     String?   @db.Text
   biography   String?   @db.Text
   birthDate   DateTime? @map("birth_date") @db.Date
   verified    Boolean   @default(false)
