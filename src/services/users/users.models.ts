@@ -2,14 +2,15 @@ import type { User } from '@prisma/client'
 
 import type { BaseResponse, PageResponseModel } from '@/types'
 
-export type UserSafeModel = Omit<User, 'password'>
+export type OmitPassword<T> = Omit<T, 'password'>
 
-export interface PageUserModel extends UserSafeModel {
-  genderLabel?: string
+export interface PageUserModel extends OmitPassword<User> {
+  genderLabel: string
+  roles: string[]
 }
 
-export type UsersModel = {
-  users: User[]
+export type PageUsersModel = {
+  users: PageUserModel[]
 } & PageResponseModel
 
 export type UserExistModel = {
@@ -39,7 +40,7 @@ export type UserSignupInputModel = UserInputBaseModel & { confirmPassword: strin
 
 export type UserLoginResponse = UserSignupResponse
 export type UserSignupResponse = BaseResponse<{
-  user: UserSafeModel
+  user: OmitPassword<User>
   accessToken: string
 }>
 

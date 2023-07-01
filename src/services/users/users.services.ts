@@ -3,10 +3,18 @@ import type { User } from '@prisma/client'
 import { PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
-import type { UserExistModel, UserInputBaseModel, UserSafeModel, UsersModel, UserUpdateModel } from './users.models'
+import type { PageUsersModel, UserExistModel, UserInputBaseModel, UserUpdateModel } from './users.models'
+import { genderLabelKeyMap } from './users.models'
 
-export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel> => {
+export const filterSafeUserInfo = <T extends { password: string }>(user: T): Omit<T, 'password'> => {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  const { password, ...filteredUser } = user
+  return filteredUser
+}
+
+export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOptions): Promise<PageUsersModel> => {
   const { pageCount, pageSize } = pageModel
+  const { t, lang } = options || {}
 
   const users = await PrismaQuery.user.findMany({
     where: {
@@ -15,7 +23,17 @@ export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel>
       ...PrismaAction.notDeleted()
     },
     skip: (pageCount - 1) * pageSize,
-    take: pageSize
+    take: pageSize,
+    include: {
+      userRoles: {
+        select: {
+          role: true
+        },
+        where: {
+          ...PrismaAction.notDeleted()
+        }
+      }
+    }
   })
 
   const total = await PrismaQuery.user.count({
@@ -27,7 +45,24 @@ export const getUsers = async (pageModel: PageRequestModel): Promise<UsersModel>
   })
 
   return {
-    users,
+    users: users.map((user) => {
+      const { userRoles, ...restUser } = user
+      let genderLabel = ''
+      if (typeof user.gender === 'number') {
+        const genderLabelKey = genderLabelKeyMap.get(user.gender)
+        if (genderLabelKey) {
+          genderLabel = t ? t(genderLabelKeyMap.get(user.gender)!) : ''
+        }
+      }
+      return {
+        ...filterSafeUserInfo(restUser),
+        roles: userRoles
+          .map((userRole) => userRole.role)
+          .map((role) => (lang === 'en_US' ? role.nameEn : role.nameZh))
+          .filter((roleName) => roleName) as string[],
+        genderLabel
+      }
+    }),
     total,
     ...pageModel
   }
@@ -44,8 +79,7 @@ export const getUserById = async (id: number): Promise<User | null> =>
   })
 
 export const createUser = async (user: UserInputBaseModel, options?: ServiceOptions): Promise<User> => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.user.create({
     data: {
       ...user,
@@ -57,8 +91,7 @@ export const createUser = async (user: UserInputBaseModel, options?: ServiceOpti
 }
 
 export const updateUser = async (id: number, user: UserUpdateModel, options?: ServiceOptions): Promise<User | null> => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.user.update({
     where: {
       id
@@ -71,8 +104,7 @@ export const updateUser = async (id: number, user: UserUpdateModel, options?: Se
 }
 
 export const deleteUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.user.update({
     where: {
       id
@@ -97,15 +129,8 @@ export const alreadyExists = async (username: string): Promise<UserExistModel> =
   return { isExist: !!user, user }
 }
 
-export const filterSafeUserInfo = (user: User): UserSafeModel => {
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  const { password, ...filteredUser } = user
-  return filteredUser
-}
-
 export const verifyUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.user.update({
     where: {
       id
@@ -118,8 +143,7 @@ export const verifyUser = async (id: number, options?: ServiceOptions): Promise<
 }
 
 export const banUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.user.update({
     where: {
       id
@@ -132,8 +156,7 @@ export const banUser = async (id: number, options?: ServiceOptions): Promise<Use
 }
 
 export const enableUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.user.update({
     where: {
       id

@@ -6,6 +6,7 @@ declare global {
   namespace Express {
     interface Request {
       currentUser: User
+      lang: Lang
       t(key: MessageSchema, lang?: Lang): string
     }
   }

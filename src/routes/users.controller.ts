@@ -1,3 +1,4 @@
+import type { User } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import type { Request, Router } from 'express'
 import express from 'express'
@@ -5,20 +6,20 @@ import express from 'express'
 import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type {
+  OmitPassword,
   PageUserModel,
-  UserSafeModel,
   UserSignupInputModel,
   UserSignupResponse,
   UserUpdateInputBaseModel
 } from '@/services'
-import { genderLabelKeyMap, UsersService } from '@/services'
+import { UsersService } from '@/services'
 import { passwordHash } from '@/shared'
 import type { BasePageResponse, BaseResponse, PageRequestModel } from '@/types'
 
 const router: Router = express.Router()
 
 router.get('/', async (request: Request, response: BasePageResponse<PageUserModel[]>) => {
-  const { t } = request
+  const { t, lang } = request
   const { pageCount, pageSize } = request.query
   if (!pageCount || !pageSize) {
     response.status(400).json({
@@ -39,27 +40,15 @@ router.get('/', async (request: Request, response: BasePageResponse<PageUserMode
     pageSize: Number(pageSize)
   }
 
-  const { users, ...pageResult } = await UsersService.getUsers(pageModel)
+  const { users, ...pageResult } = await UsersService.getUsers(pageModel, { t, lang })
 
   response.status(200).json({
-    data: users.map((user) => {
-      let genderLabel = ''
-      if (typeof user.gender === 'number') {
-        const genderLabelKey = genderLabelKeyMap.get(user.gender)
-        if (genderLabelKey) {
-          genderLabel = t(genderLabelKeyMap.get(user.gender)!)
-        }
-      }
-      return {
-        ...UsersService.filterSafeUserInfo(user),
-        genderLabel
-      }
-    }),
+    data: users,
     ...pageResult
   })
 })
 
-router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSafeModel>) => {
+router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<OmitPassword<User>>) => {
   const { t } = request
   const id = parseInt(request.params.id, 10)
 
@@ -75,7 +64,7 @@ router.get('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSaf
   }
 })
 
-router.get('/info', async (request: Request, response: BaseResponse<UserSafeModel>) => {
+router.get('/info', async (request: Request, response: BaseResponse<OmitPassword<User>>) => {
   const { t } = request
   if (!request.currentUser) {
     response.status(404).json({
@@ -90,7 +79,7 @@ router.get('/info', async (request: Request, response: BaseResponse<UserSafeMode
 })
 
 router.post('/', async (request: Request, response: UserSignupResponse) => {
-  const { t } = request
+  const { t, currentUser } = request
   const { username, password, confirmPassword } = request.body as UserSignupInputModel
 
   if (!username?.trim()) {
@@ -148,7 +137,7 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
         username,
         password: await passwordHash(password)
       },
-      { request }
+      { currentUser }
     )
 
     // Generate JWT token
@@ -179,8 +168,8 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
   }
 })
 
-router.put('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSafeModel>) => {
-  const { t } = request
+router.put('/:id(\\d+)', async (request: Request, response: BaseResponse<OmitPassword<User>>) => {
+  const { t, currentUser } = request
   const id = parseInt(request.params.id, 10)
   if (!id) {
     response.status(400).json({
@@ -207,7 +196,7 @@ router.put('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSaf
         avatarUrl,
         biography
       },
-      { request }
+      { currentUser }
     )
     if (!user) {
       response.status(404).json({
@@ -237,7 +226,7 @@ router.put('/:id(\\d+)', async (request: Request, response: BaseResponse<UserSaf
 })
 
 router.delete('/:id(\\d+)', async (request: Request, response: BaseResponse) => {
-  const { t } = request
+  const { t, currentUser } = request
   const id = parseInt(request.params.id, 10)
   if (!id) {
     response.status(400).json({
@@ -247,7 +236,7 @@ router.delete('/:id(\\d+)', async (request: Request, response: BaseResponse) => 
   }
 
   try {
-    const user = await UsersService.deleteUser(id, { request })
+    const user = await UsersService.deleteUser(id, { currentUser })
     if (!user) {
       response.status(404).json({
         message: t('User.NotExist')

@@ -1,5 +1,8 @@
 // NOTE: Written global types here.
-import type { Request, Response } from 'express'
+import type { User } from '@prisma/client'
+import type { Response } from 'express'
+
+import type { Lang, MessageSchema } from './i18n'
 
 // Base response types
 interface ErrorResponseModel {
@@ -27,7 +30,9 @@ export interface PageResponseModel extends PageRequestModel {
 export type BasePageResponse<T = any> = Response<(BaseResponseModel<T> & PageResponseModel) | ErrorResponseModel>
 
 export interface ServiceOptions {
-  request?: Request
+  currentUser?: User
+  lang?: Lang
+  t?(key: MessageSchema, lang?: Lang): string
 }
 
 export * from './i18n'

@@ -48,8 +48,7 @@ export const getSettingsByKeys = async (keys: string[]) =>
   })
 
 export const createSetting = async (setting: SettingsInputModel, options?: ServiceOptions) => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.setting.create({
     data: {
       ...setting,
@@ -61,8 +60,7 @@ export const createSetting = async (setting: SettingsInputModel, options?: Servi
 }
 
 export const createSettings = async (settings: SettingsInputModel[], options?: ServiceOptions) => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.setting.createMany({
     data: settings.map((setting) => ({
       ...setting,
@@ -76,8 +74,7 @@ export const createSettings = async (settings: SettingsInputModel[], options?: S
 
 export const updateSettingByKey = async (setting: SettingsInputModel, options?: ServiceOptions) => {
   const { key, value, description } = setting
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.setting.update({
     where: {
       key
@@ -91,8 +88,7 @@ export const updateSettingByKey = async (setting: SettingsInputModel, options?: 
 }
 
 export const deleteSettingByKey = async (key: string, options?: ServiceOptions) => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.setting.update({
     where: {
       key
@@ -106,8 +102,7 @@ export const deleteSettingByKey = async (key: string, options?: ServiceOptions) 
 }
 
 export const banSettingByKey = async (key: string, options?: ServiceOptions) => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.setting.update({
     where: {
       key
@@ -120,8 +115,7 @@ export const banSettingByKey = async (key: string, options?: ServiceOptions) => 
 }
 
 export const enableSettingByKey = async (key: string, options?: ServiceOptions) => {
-  const { request } = options || {}
-  const currentUser = request?.currentUser
+  const { currentUser } = options || {}
   return PrismaQuery.setting.update({
     where: {
       key

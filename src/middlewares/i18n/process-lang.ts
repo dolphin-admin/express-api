@@ -53,6 +53,8 @@ export const processLang = (req: Request, res: Response, next: NextFunction) => 
     currentLang = 'zh_CN'
   }
 
+  req.lang = currentLang
+
   req.t = (key: MessageSchema, lang: Lang = currentLang) => {
     if (!LangList.includes(lang)) {
       console.error(`Invalid lang type: ${lang}`)

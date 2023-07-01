@@ -72,7 +72,7 @@ router.get('/:key', async (request: Request, response: BaseResponse<Setting>) =>
 })
 
 router.post('/', async (request: Request, response: BaseResponse) => {
-  const { t } = request
+  const { t, currentUser } = request
   const { key, value, description } = request.body as Setting
 
   if (!key) {
@@ -95,7 +95,7 @@ router.post('/', async (request: Request, response: BaseResponse) => {
       value,
       description
     },
-    { request }
+    { currentUser }
   )
 
   response.status(201).json({
@@ -104,7 +104,7 @@ router.post('/', async (request: Request, response: BaseResponse) => {
 })
 
 router.post('/batch', async (request: Request, response: BaseResponse) => {
-  const { t } = request
+  const { t, currentUser } = request
   const { settings } = request.body
 
   if (!settings || !Array.isArray(settings)) {
@@ -131,7 +131,7 @@ router.post('/batch', async (request: Request, response: BaseResponse) => {
     return
   }
 
-  await SettingsService.createSettings(settings, { request })
+  await SettingsService.createSettings(settings, { currentUser })
 
   response.status(201).json({
     message: t('Key.Created')
@@ -139,7 +139,7 @@ router.post('/batch', async (request: Request, response: BaseResponse) => {
 })
 
 router.put('/:key', async (request: Request, response: BaseResponse) => {
-  const { t } = request
+  const { t, currentUser } = request
   const { key } = request.params
   const { value, description } = request.body as Setting
 
@@ -164,7 +164,7 @@ router.put('/:key', async (request: Request, response: BaseResponse) => {
         value,
         description
       },
-      { request }
+      { currentUser }
     )
 
     response.status(200).json({
@@ -179,7 +179,7 @@ router.put('/:key', async (request: Request, response: BaseResponse) => {
 })
 
 router.delete('/:key', async (request: Request, response: BaseResponse) => {
-  const { t } = request
+  const { t, currentUser } = request
   const { key } = request.params
 
   if (!key) {
@@ -197,7 +197,7 @@ router.delete('/:key', async (request: Request, response: BaseResponse) => {
   }
 
   try {
-    await SettingsService.deleteSettingByKey(key, { request })
+    await SettingsService.deleteSettingByKey(key, { currentUser })
     response.status(200).json({
       message: t('Key.Deleted')
     })
