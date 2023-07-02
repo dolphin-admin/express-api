@@ -13,7 +13,7 @@ export const filterSafeUserInfo = <T extends { password: string }>(user: T): Omi
 }
 
 export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOptions): Promise<PageUsersModel> => {
-  const { pageCount, pageSize } = pageModel
+  const { page, pageSize } = pageModel
   const { t, lang } = options || {}
 
   const users = await PrismaQuery.user.findMany({
@@ -22,7 +22,7 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
       enabled: true,
       ...PrismaAction.notDeleted()
     },
-    skip: (pageCount - 1) * pageSize,
+    skip: (page - 1) * pageSize,
     take: pageSize,
     include: {
       userRoles: {

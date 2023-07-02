@@ -18,7 +18,7 @@ export type BaseResponse<T = any> = Response<BaseResponseModel<T> | ErrorRespons
 
 // Pagination response types
 export interface PageRequestModel {
-  pageCount: number
+  page: number
   pageSize: number
   searchText?: string
 }

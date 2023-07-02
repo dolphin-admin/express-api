@@ -9,16 +9,16 @@ const router: Router = express.Router()
 
 router.get('/', async (request: Request, response: BasePageResponse<Setting[]>) => {
   const { t } = request
-  const { pageCount, pageSize } = request.query
+  const { page, pageSize } = request.query
 
-  if (!pageCount || !pageSize) {
+  if (!page || !pageSize) {
     response.status(400).json({
       message: t('Page.Require')
     })
     return
   }
 
-  if (typeof Number(pageCount) !== 'number' || typeof Number(pageSize) !== 'number') {
+  if (typeof Number(page) !== 'number' || typeof Number(pageSize) !== 'number') {
     response.status(400).json({
       message: t('Page.Invalid')
     })
@@ -26,7 +26,7 @@ router.get('/', async (request: Request, response: BasePageResponse<Setting[]>) 
   }
 
   const pageModel: PageRequestModel = {
-    pageCount: Number(pageCount),
+    page: Number(page),
     pageSize: Number(pageSize)
   }
 
