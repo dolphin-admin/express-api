@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import { type User } from '@prisma/client'
 
 import { PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
@@ -92,12 +92,15 @@ export const createUser = async (user: UserInputBaseModel, options?: ServiceOpti
 
 export const updateUser = async (id: number, user: UserUpdateModel, options?: ServiceOptions): Promise<User | null> => {
   const { currentUser } = options || {}
+  const { birthDate } = user
+
   return PrismaQuery.user.update({
     where: {
       id
     },
     data: {
       ...user,
+      birthDate: birthDate ? new Date(birthDate) : null,
       updatedBy: currentUser?.id
     }
   })
