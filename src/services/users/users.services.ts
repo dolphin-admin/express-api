@@ -18,8 +18,6 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
 
   const users = await PrismaQuery.user.findMany({
     where: {
-      verified: true,
-      enabled: true,
       ...PrismaAction.notDeleted()
     },
     skip: (page - 1) * pageSize,
@@ -38,8 +36,6 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
 
   const total = await PrismaQuery.user.count({
     where: {
-      verified: true,
-      enabled: true,
       ...PrismaAction.notDeleted()
     }
   })
@@ -72,8 +68,6 @@ export const getUserById = async (id: number): Promise<User | null> =>
   PrismaQuery.user.findFirst({
     where: {
       id,
-      verified: true,
-      enabled: true,
       ...PrismaAction.notDeleted()
     }
   })
@@ -124,8 +118,6 @@ export const alreadyExists = async (username: string): Promise<UserExistModel> =
   const user = await PrismaQuery.user.findFirst({
     where: {
       username,
-      verified: true,
-      enabled: true,
       ...PrismaAction.notDeleted()
     }
   })
