@@ -18,21 +18,31 @@ export type UserExistModel = {
   user: User | null
 }
 
-export type UserUpdateInputBaseModel = Pick<
-  User,
-  | 'email'
-  | 'name'
-  | 'firstName'
-  | 'lastName'
-  | 'gender'
-  | 'phoneNumber'
-  | 'birthDate'
-  | 'address'
-  | 'avatarUrl'
-  | 'biography'
+export type UserUpdateModel = Partial<
+  Pick<
+    User,
+    | 'username'
+    | 'password'
+    | 'email'
+    | 'phoneNumber'
+    | 'name'
+    | 'firstName'
+    | 'lastName'
+    | 'nickName'
+    | 'avatarUrl'
+    | 'gender'
+    | 'country'
+    | 'province'
+    | 'city'
+    | 'address'
+    | 'biography'
+    | 'birthDate'
+    | 'verified'
+    | 'enabled'
+  >
 >
 
-export type UserUpdateModel = UserUpdateInputBaseModel & { updateAt?: Date; updateBy?: string }
+export type UserUpdateKeys = keyof UserUpdateModel
 
 export type UserInputBaseModel = Pick<User, 'username' | 'password'>
 export type UserLoginInputModel = UserInputBaseModel
@@ -43,6 +53,19 @@ export type UserSignupResponse = BaseResponse<{
   user: OmitPassword<User>
   accessToken: string
 }>
+
+export type UserCreateInputModel = UserInputBaseModel
+export type UserCreateResponse = BaseResponse<OmitPassword<User>>
+
+export type UserChangePasswordModel = {
+  oldPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export type UserResetPasswordModel = {
+  password: string
+}
 
 export enum Gender {
   'FEMALE' = 0,

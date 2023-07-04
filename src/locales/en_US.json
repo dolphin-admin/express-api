@@ -13,6 +13,16 @@
     "NotExist": "Username does not exist.",
     "AlreadyExist": "Username already exists."
   },
+  "OldPassword": {
+    "Require": "Old password is required.",
+    "MaxLength": "Old password must be at least 6 characters.",
+    "Incorrect": "Old password is incorrect."
+  },
+  "NewPassword": {
+    "Require": "New password is required.",
+    "MaxLength": "New password must be at least 6 characters.",
+    "Repeated": "New password cannot be the same as old password."
+  },
   "Password": {
     "Require": "Password is required.",
     "MaxLength": "Password must be at least 6 characters.",
@@ -32,7 +42,16 @@
     "Updated": "User updated.",
     "UpdateFailed": "User update failed.",
     "Deleted": "User deleted.",
-    "DeleteFailed": "User delete failed."
+    "DeleteFailed": "User delete failed.",
+    "Activated": "User activated.",
+    "ActivatedFailed": "User activate failed.",
+    "Deactivated": "User deactivated.",
+    "DeactivatedFailed": "User deactivate failed.",
+    "CanNotProcessCurrentUser": "Cannot process current user.",
+    "ChangedPassword": "Changed password.",
+    "ChangedPasswordFailed": "Change password failed.",
+    "ResetPassword": "Reset password.",
+    "ResetPasswordFailed": "Reset password failed."
   },
   "Gender": {
     "Male": "Male",

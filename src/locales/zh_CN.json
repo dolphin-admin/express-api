@@ -13,6 +13,16 @@
     "NotExist": "用户名不存在",
     "AlreadyExist": "用户名已存在"
   },
+  "OldPassword": {
+    "Require": "旧密码不能为空",
+    "MaxLength": "旧密码至少位 6 位",
+    "Incorrect": "旧密码错误"
+  },
+  "NewPassword": {
+    "Require": "新密码不能为空",
+    "MaxLength": "新密码至少位 6 位",
+    "Repeated": "新密码不能和旧密码一致"
+  },
   "Password": {
     "Require": "密码不能为空",
     "MaxLength": "密码至少位 6 位",
@@ -32,7 +42,16 @@
     "Updated": "用户更新成功",
     "UpdateFailed": "用户更新失败",
     "Deleted": "用户删除成功",
-    "DeleteFailed": "用户删除失败"
+    "DeleteFailed": "用户删除失败",
+    "Activated": "用户启用成功",
+    "ActivatedFailed": "用户启用失败",
+    "Deactivated": "用户禁用成功",
+    "DeactivatedFailed": "用户禁用失败",
+    "CanNotProcessCurrentUser": "不能操作当前用户",
+    "ChangedPassword": "修改密码成功",
+    "ChangedPasswordFailed": "修改密码失败",
+    "ResetPassword": "重置密码成功",
+    "ResetPasswordFailed": "重置密码失败"
   },
   "Gender": {
     "Male": "男",

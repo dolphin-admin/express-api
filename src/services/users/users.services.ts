@@ -145,20 +145,7 @@ export const verifyUser = async (id: number, options?: ServiceOptions): Promise<
   })
 }
 
-export const banUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
-  const { currentUser } = options || {}
-  return PrismaQuery.user.update({
-    where: {
-      id
-    },
-    data: {
-      enabled: false,
-      updatedBy: currentUser?.id
-    }
-  })
-}
-
-export const enableUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
+export const activateUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { currentUser } = options || {}
   return PrismaQuery.user.update({
     where: {
@@ -166,6 +153,19 @@ export const enableUser = async (id: number, options?: ServiceOptions): Promise<
     },
     data: {
       enabled: true,
+      updatedBy: currentUser?.id
+    }
+  })
+}
+
+export const deactivateUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
+  const { currentUser } = options || {}
+  return PrismaQuery.user.update({
+    where: {
+      id
+    },
+    data: {
+      enabled: false,
       updatedBy: currentUser?.id
     }
   })
