@@ -20,6 +20,9 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
     where: {
       ...PrismaAction.notDeleted()
     },
+    orderBy: {
+      createdAt: 'desc'
+    },
     skip: (page - 1) * pageSize,
     take: pageSize,
     include: {
