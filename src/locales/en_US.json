@@ -90,5 +90,19 @@
   },
   "Upload": {
     "Success": "Upload success."
+  },
+  "GitHub": {
+    "Authorize": {
+      "Failed": "Missing GitHub authorization info."
+    },
+    "Config": {
+      "Missing": "Server GitHub auth config missing."
+    },
+    "GenerateToken": {
+      "Failed": "Error generating GitHub token."
+    },
+    "FetchUserData": {
+      "Failed": "Error fetching GitHub user data."
+    }
   }
 }

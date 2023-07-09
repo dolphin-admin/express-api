@@ -32,6 +32,11 @@ export const GlobalDBConfig = Object.freeze({
   DB_URL: getEnvStr('DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/est-db')
 })
 
+export const GlobalAuthConfig = Object.freeze({
+  GITHUB_CLIENT_ID: getEnvStr('GITHUB_CLIENT_ID', ''),
+  GITHUB_CLIENT_SECRET: getEnvStr('GITHUB_CLIENT_SECRET', '')
+})
+
 export const GlobalFileStorageConfig = Object.freeze({
   FILE_STORAGE_PATH: getEnvStr('FILE_STORAGE_PATH', 'storage')
 })

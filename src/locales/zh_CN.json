@@ -90,5 +90,19 @@
   },
   "Upload": {
     "Success": "上传成功"
+  },
+  "GitHub": {
+    "Authorize": {
+      "Failed": "缺少 GitHub 授权信息"
+    },
+    "Config": {
+      "Missing": "服务器缺少 GitHub Auth 配置信息"
+    },
+    "GenerateToken": {
+      "Failed": "生成 GitHub token 失败"
+    },
+    "FetchUserData": {
+      "Failed": "获取 GitHub 用户信息失败"
+    }
   }
 }
