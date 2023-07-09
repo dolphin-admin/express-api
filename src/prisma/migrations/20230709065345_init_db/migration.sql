@@ -33,8 +33,8 @@ CREATE TABLE "system_user" (
 CREATE TABLE "system_auth" (
     "id" SERIAL NOT NULL,
     "auth_type" INTEGER NOT NULL,
+    "open_id" TEXT NOT NULL,
     "token" VARCHAR(255) NOT NULL,
-    "expires_at" TIMESTAMPTZ(3),
     "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
@@ -158,6 +158,9 @@ CREATE UNIQUE INDEX "system_user_username_key" ON "system_user"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "system_user_email_key" ON "system_user"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "system_auth_auth_type_open_id_key" ON "system_auth"("auth_type", "open_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "system_role_key_key" ON "system_role"("key");

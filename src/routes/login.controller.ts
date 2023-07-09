@@ -1,11 +1,23 @@
+import { hash } from '@node-rs/bcrypt'
+import axios from 'axios'
 import type { Request, Router } from 'express'
 import express from 'express'
 
 import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserLoginInputModel, UserLoginResponse } from '@/services'
-import { UsersService } from '@/services'
-import { passwordEquals } from '@/shared'
+import { AuthType, UsersService } from '@/services'
+import {
+  generateRandomString,
+  GlobalAuthConfig,
+  passwordEquals,
+  PrismaAction,
+  PrismaQuery,
+  SEED_SUPER_ADMIN_PASSWORD
+} from '@/shared'
+
+const POST_GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+const GET_GITHUB_USER_URL = 'https://api.github.com/user'
 
 const router: Router = express.Router()
 
@@ -76,6 +88,170 @@ router.post('/', async (request: Request, response: UserLoginResponse) => {
     },
     message: t('Login.Success')
   })
+})
+
+router.post('/github', async (request: Request, response: UserLoginResponse) => {
+  const { t } = request
+  const { code } = request.body as { code: string }
+
+  if (!code) {
+    response.status(401).json({
+      message: t('GitHub.Authorize.Failed')
+    })
+    return
+  }
+
+  const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = GlobalAuthConfig
+
+  if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+    response.status(401).json({
+      message: t('GitHub.Config.Missing')
+    })
+    return
+  }
+
+  try {
+    const githubTokenResponse = await axios({
+      method: 'post',
+      url:
+        `${POST_GITHUB_TOKEN_URL}?client_id=${GITHUB_CLIENT_ID}&` +
+        `client_secret=${GITHUB_CLIENT_SECRET}&` +
+        `code=${code}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json'
+      }
+    })
+
+    const githubToken = githubTokenResponse.data.access_token
+
+    if (!githubToken) {
+      response.status(401).json({
+        message: t('GitHub.GenerateToken.Failed')
+      })
+      return
+    }
+
+    const githubUserResponse = await axios({
+      method: 'get',
+      url: GET_GITHUB_USER_URL,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+        Authorization: `Bearer ${githubToken}`
+      }
+    })
+
+    const githubUserData = githubUserResponse.data
+      ? {
+          id: githubUserResponse.data.id,
+          login: githubUserResponse.data.login,
+          name: githubUserResponse.data.name,
+          email: githubUserResponse.data.email,
+          avatarUrl: githubUserResponse.data.avatar_url,
+          bio: githubUserResponse.data.bio,
+          location: githubUserResponse.data.location
+        }
+      : null
+
+    if (!githubUserData || !githubUserData.id) {
+      response.status(404).json({
+        message: t('GitHub.FetchUserData.Failed')
+      })
+      return
+    }
+
+    const authUser = await PrismaQuery.auth.findFirst({
+      include: {
+        user: true
+      },
+      where: {
+        authType: AuthType.GitHub,
+        openId: githubUserData.id.toString(),
+        ...PrismaAction.notDeleted()
+      }
+    })
+
+    if (authUser) {
+      const shouldChangeAccessToken = authUser.token !== githubToken
+      if (shouldChangeAccessToken) {
+        await PrismaQuery.auth.update({
+          where: { id: authUser.id },
+          data: {
+            token: githubToken
+          }
+        })
+      }
+
+      const jwtUserModel: JWTUserModel = {
+        id: authUser.userId,
+        username: authUser.user.username
+      }
+
+      const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+      if (!accessToken) {
+        response.status(401).json({
+          message: t('Token.Generate.Failed')
+        })
+        return
+      }
+
+      response.status(200).json({
+        data: {
+          user: UsersService.filterSafeUserInfo(authUser.user),
+          accessToken
+        },
+        message: t('Login.Success')
+      })
+    } else {
+      const user = await PrismaQuery.user.create({
+        data: {
+          username: `User-${generateRandomString(8)}`,
+          password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
+          name: githubUserData.name ?? githubUserData.login,
+          email: githubUserData.email,
+          avatarUrl: githubUserData.avatarUrl,
+          biography: githubUserData.bio,
+          address: githubUserData.location,
+          enabled: true,
+          verified: true,
+          auths: {
+            create: {
+              authType: AuthType.GitHub,
+              token: githubToken,
+              openId: githubUserData.id.toString()
+            }
+          }
+        }
+      })
+
+      const jwtUserModel: JWTUserModel = {
+        id: user.id,
+        username: user.username
+      }
+
+      const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+      if (!accessToken) {
+        response.status(401).json({
+          message: t('Token.Generate.Failed')
+        })
+        return
+      }
+
+      response.status(200).json({
+        data: {
+          user: UsersService.filterSafeUserInfo(user),
+          accessToken
+        },
+        message: t('Login.Success')
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    response.status(401).json({
+      message: t('GitHub.Authorize.Failed')
+    })
+  }
 })
 
 export default router

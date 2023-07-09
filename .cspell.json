@@ -22,6 +22,7 @@
     "public",
     "pnpm-lock.yaml",
     "README.md",
-    "/src/prisma/migrations"
+    "/src/prisma/migrations",
+    "/docs/user.json"
   ]
 }
