@@ -1,6 +1,6 @@
 import { type User } from '@prisma/client'
 
-import { PrismaAction, PrismaQuery } from '@/shared'
+import { AuthType, PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
 import type { PageUsersModel, UserExistModel, UserInputBaseModel, UserUpdateModel } from './users.models'
@@ -33,6 +33,11 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
         where: {
           ...PrismaAction.notDeleted()
         }
+      },
+      auths: {
+        select: {
+          authType: true
+        }
       }
     }
   })
@@ -59,7 +64,8 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
           .map((userRole) => userRole.role)
           .map((role) => (lang === 'en_US' ? role.nameEn : role.nameZh))
           .filter((roleName) => roleName) as string[],
-        genderLabel
+        genderLabel,
+        authTypes: user.auths.map((auth) => AuthType[auth.authType])
       }
     }),
     total,

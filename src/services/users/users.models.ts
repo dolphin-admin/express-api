@@ -7,6 +7,7 @@ export type OmitPassword<T> = Omit<T, 'password'>
 export interface PageUserModel extends OmitPassword<User> {
   genderLabel: string
   roles: string[]
+  authTypes: string[]
 }
 
 export type PageUsersModel = {

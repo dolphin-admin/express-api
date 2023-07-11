@@ -6,8 +6,9 @@ import express from 'express'
 import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserLoginInputModel, UserLoginResponse } from '@/services'
-import { AuthType, UsersService } from '@/services'
+import { UsersService } from '@/services'
 import {
+  AuthType,
   generateRandomString,
   GlobalAuthConfig,
   passwordEquals,
