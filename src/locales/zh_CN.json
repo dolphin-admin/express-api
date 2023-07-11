@@ -104,5 +104,19 @@
     "FetchUserData": {
       "Failed": "获取 GitHub 用户信息失败"
     }
+  },
+  "Google": {
+    "Authorize": {
+      "Failed": "缺少 Google 授权信息"
+    },
+    "Config": {
+      "Missing": "服务器缺少 Google Auth 配置信息"
+    },
+    "GenerateToken": {
+      "Failed": "生成 Google token 失败"
+    },
+    "FetchUserData": {
+      "Failed": "获取 Google 用户信息失败"
+    }
   }
 }

@@ -48,6 +48,7 @@ model Auth {
   authType Int    @map("auth_type")
   openId   String @map("open_id")
   token    String @db.VarChar(255)
+  data     Json?  @db.Json
 
   user   User @relation(fields: [userId], references: [id])
   userId Int  @map("user_id")
