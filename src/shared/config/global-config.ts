@@ -34,7 +34,10 @@ export const GlobalDBConfig = Object.freeze({
 
 export const GlobalAuthConfig = Object.freeze({
   GITHUB_CLIENT_ID: getEnvStr('GITHUB_CLIENT_ID', ''),
-  GITHUB_CLIENT_SECRET: getEnvStr('GITHUB_CLIENT_SECRET', '')
+  GITHUB_CLIENT_SECRET: getEnvStr('GITHUB_CLIENT_SECRET', ''),
+  GOOGLE_CLIENT_ID: getEnvStr('GOOGLE_CLIENT_ID', ''),
+  GOOGLE_CLIENT_SECRET: getEnvStr('GOOGLE_CLIENT_SECRET', ''),
+  GOOGLE_CLIENT_REDIRECT_URL: getEnvStr('GOOGLE_CLIENT_REDIRECT_URL', '')
 })
 
 export const GlobalFileStorageConfig = Object.freeze({

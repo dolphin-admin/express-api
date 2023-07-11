@@ -104,5 +104,19 @@
     "FetchUserData": {
       "Failed": "Error fetching GitHub user data."
     }
+  },
+  "Google": {
+    "Authorize": {
+      "Failed": "Missing Google authorization info."
+    },
+    "Config": {
+      "Missing": "Server Google auth config missing."
+    },
+    "GenerateToken": {
+      "Failed": "Error generating Google token."
+    },
+    "FetchUserData": {
+      "Failed": "Error fetching Google user data."
+    }
   }
 }
