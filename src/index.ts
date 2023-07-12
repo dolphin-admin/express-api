@@ -1,6 +1,7 @@
 import figlet from 'figlet'
 import gradient from 'gradient-string'
 import http from 'http'
+import { Server } from 'socket.io'
 
 import { AppRegister } from '@/base'
 import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig } from '@/shared'
@@ -11,7 +12,9 @@ const { PORT } = GlobalConfig
 
 app.set('port', PORT)
 
-const Server = http.createServer(app)
+const server = http.createServer(app)
+
+const io = new Server(server)
 
 const showAppInitLog = (port: string) => {
   console.clear()
@@ -35,8 +38,23 @@ const showAppInitLog = (port: string) => {
   })
 }
 
-Server.listen(PORT, async () => {
-  const serverInfo = Server.address()
+const websocket = io.of('/websocket')
+
+console.log(websocket)
+
+websocket.on('connection', (socket) => {
+  console.log('Connected')
+  socket.on('disconnect', () => {
+    console.log('Disconnected')
+  })
+  socket.on('message', (data) => {
+    console.log(data)
+    socket.broadcast.emit('message', data)
+  })
+})
+
+server.listen(PORT, async () => {
+  const serverInfo = server.address()
   let port = ''
   if (serverInfo) {
     if (typeof serverInfo !== 'string') {
