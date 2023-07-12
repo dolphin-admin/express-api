@@ -10,6 +10,7 @@ Dolphin Admin Server 是 DoDolphinlpin Admin Web 的后端服务，基于 `Expre
 - [x] [Prisma](https://www.prisma.io/) 作为 ORM
 - [x] JWT 认证和基于角色的授权
 - [x] 使用 `multer` 构建文件服务
+- [x] 使用 `socket.io` 构建 WebSocket 服务
 - [x] 使用 `ESLint` 执行代码检查
 - [x] 使用 `Prettier` 执行代码格式化
 - [x] 使用 `cspell` 执行代码拼写检查
