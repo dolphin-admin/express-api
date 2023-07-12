@@ -14,7 +14,12 @@ app.set('port', PORT)
 
 const server = http.createServer(app)
 
-const io = new Server(server)
+const io = new Server(server, {
+  cors: {
+    origin: '*', // 允许所有的跨域请求
+    methods: ['GET', 'POST']
+  }
+})
 
 const showAppInitLog = (port: string) => {
   console.clear()
