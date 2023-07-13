@@ -14,6 +14,7 @@ import app from './app'
 
 const { HTTP_PORT, HTTPS_PORT } = GlobalConfig
 
+// localhost https 证书
 const cred = {
   key: fs.readFileSync(path.resolve(__dirname, '../cert/key.local.pem')),
   cert: fs.readFileSync(path.resolve(__dirname, '../cert/cert.local.pem'))

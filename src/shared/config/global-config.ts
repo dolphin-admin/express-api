@@ -7,8 +7,8 @@ export const GlobalConfig = Object.freeze({
   IS_TEST: getEnvStr('NODE_ENV', 'development') === 'test',
   IS_DEVELOPMENT: getEnvStr('NODE_ENV', 'development') === 'development',
   IS_PRODUCTION: getEnvStr('NODE_ENV', 'development') === 'production',
-  HTTP_PORT: getEnvNumber('PORT', 3000),
-  HTTPS_PORT: getEnvNumber('PORT', 3001)
+  HTTP_PORT: getEnvNumber('HTTP_PORT', 3000),
+  HTTPS_PORT: getEnvNumber('HTTPS_PORT', 3001)
 })
 
 export const GlobalAppConfig = Object.freeze({
