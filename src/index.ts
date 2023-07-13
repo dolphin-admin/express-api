@@ -52,7 +52,8 @@ const showAppInitLog = (port: string) => {
         GlobalAppConfig.APP_VERSION
       }`,
       `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Author: ${GlobalAppConfig.APP_AUTHOR.name}`,
-      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Server is running on port ${port}`
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] HTTP Server is running on port ${port}`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] HTTPS Server is running on port 3001`
     ])
   })
 }
