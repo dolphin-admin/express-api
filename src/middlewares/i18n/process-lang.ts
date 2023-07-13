@@ -43,7 +43,7 @@ const getTranslation = (translation: Translation, key: string): string | undefin
   return typeof current === 'string' ? current : undefined
 }
 
-export const processLang = (req: Request, res: Response, next: NextFunction) => {
+export const processLang = (req: Request, _: Response, next: NextFunction) => {
   let currentLang: Lang
   const { language } = req.headers as Headers
 

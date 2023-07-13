@@ -1,6 +1,9 @@
 import figlet from 'figlet'
+import fs from 'fs'
 import gradient from 'gradient-string'
 import http from 'http'
+import https from 'https'
+import path from 'path'
 import { Server } from 'socket.io'
 
 import { AppRegister } from '@/base'
@@ -12,9 +15,21 @@ const { PORT } = GlobalConfig
 
 app.set('port', PORT)
 
-const server = http.createServer(app)
+const cred = {
+  key: fs.readFileSync(path.resolve(__dirname, '../cert/dolphin.admin-key.pem')),
+  cert: fs.readFileSync(path.resolve(__dirname, '../cert/dolphin.admin.pem'))
+}
 
-const io = new Server(server, {
+const httpServer = http.createServer(app)
+const httpsServer = https.createServer(cred, app)
+
+const httpSocket = new Server(httpServer, {
+  cors: {
+    origin: '*'
+  }
+})
+
+const httpsSocket = new Server(httpsServer, {
   cors: {
     origin: '*'
   }
@@ -42,9 +57,7 @@ const showAppInitLog = (port: string) => {
   })
 }
 
-const websocket = io.of('/websocket')
-
-websocket.on('connection', (socket) => {
+httpSocket.of('/websocket').on('connection', (socket) => {
   console.log('Connected')
   socket.on('disconnect', () => {
     console.log('Disconnected')
@@ -55,8 +68,19 @@ websocket.on('connection', (socket) => {
   })
 })
 
-server.listen(PORT, async () => {
-  const serverInfo = server.address()
+httpsSocket.of('/websocket').on('connection', (socket) => {
+  console.log('Connected')
+  socket.on('disconnect', () => {
+    console.log('Disconnected')
+  })
+  socket.on('message', (data) => {
+    console.log(data)
+    socket.broadcast.emit('message', data)
+  })
+})
+
+httpServer.listen(PORT, async () => {
+  const serverInfo = httpServer.address()
   let port = ''
   if (serverInfo) {
     if (typeof serverInfo !== 'string') {
@@ -69,3 +93,5 @@ server.listen(PORT, async () => {
   await AppRegister.rolePermissionRegister()
   showAppInitLog(port)
 })
+
+httpsServer.listen(3001)
