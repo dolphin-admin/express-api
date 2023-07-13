@@ -59,6 +59,7 @@ module.exports = {
             endOfLine: 'auto'
           }
         ],
+        '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/comma-dangle': 'off',
         '@typescript-eslint/consistent-type-imports': 'error',
         'simple-import-sort/imports': 'error',
