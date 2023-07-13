@@ -16,8 +16,8 @@ const { PORT } = GlobalConfig
 app.set('port', PORT)
 
 const cred = {
-  key: fs.readFileSync(path.resolve(__dirname, '../cert/dolphin.admin-key.pem')),
-  cert: fs.readFileSync(path.resolve(__dirname, '../cert/dolphin.admin.pem'))
+  key: fs.readFileSync(path.resolve(__dirname, '../cert/key.local.pem')),
+  cert: fs.readFileSync(path.resolve(__dirname, '../cert/cert.local.pem'))
 }
 
 const httpServer = http.createServer(app)
@@ -94,4 +94,6 @@ httpServer.listen(PORT, async () => {
   showAppInitLog(port)
 })
 
-httpsServer.listen(3001)
+httpsServer.listen(3001, () => {
+  console.log(3001)
+})
