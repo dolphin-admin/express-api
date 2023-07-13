@@ -2,7 +2,7 @@ import type { Request, Router } from 'express'
 import express from 'express'
 
 import { UploadService } from '@/services/upload'
-import { baseUpload } from '@/shared'
+import { baseUpload, GlobalAppConfig } from '@/shared'
 import type { BaseResponse } from '@/types'
 
 const router: Router = express.Router()
@@ -18,6 +18,8 @@ router.post('/', baseUpload.single('file'), async (request: Request, response: B
   }
 
   UploadService.logFileInfo(file)
+
+  file.path = `${GlobalAppConfig.APP_BASE_URL}/${file.path}`
 
   response.json({
     data: file,

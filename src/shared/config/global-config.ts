@@ -7,14 +7,16 @@ export const GlobalConfig = Object.freeze({
   IS_TEST: getEnvStr('NODE_ENV', 'development') === 'test',
   IS_DEVELOPMENT: getEnvStr('NODE_ENV', 'development') === 'development',
   IS_PRODUCTION: getEnvStr('NODE_ENV', 'development') === 'production',
-  PORT: getEnvNumber('PORT', 3000)
+  HTTP_PORT: getEnvNumber('PORT', 3000),
+  HTTPS_PORT: getEnvNumber('PORT', 3001)
 })
 
 export const GlobalAppConfig = Object.freeze({
   APP_NAME: getEnvStr('APP_NAME', getAppName()),
   APP_VERSION: getAppVersion(),
   APP_AUTHOR: getAuthorInfo(),
-  APP_DESCRIPTION: getAppDescription()
+  APP_DESCRIPTION: getAppDescription(),
+  APP_BASE_URL: getEnvStr('APP_BASE_URL', 'http://localhost:3000')
 })
 
 export const GlobalJWTConfig = Object.freeze({
@@ -29,7 +31,7 @@ export const GlobalDBConfig = Object.freeze({
   DB_HOST: getEnvStr('DB_HOST', 'localhost'),
   DB_PORT: getEnvNumber('DB_PORT', 5432),
   DB_NAME: getEnvStr('DB_NAME', 'est-db'),
-  DB_URL: getEnvStr('DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/est-db')
+  DB_URL: getEnvStr('DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/dolphin-admin')
 })
 
 export const GlobalAuthConfig = Object.freeze({

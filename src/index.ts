@@ -4,6 +4,7 @@ import gradient from 'gradient-string'
 import http from 'http'
 import https from 'https'
 import path from 'path'
+import type { Socket } from 'socket.io'
 import { Server } from 'socket.io'
 
 import { AppRegister } from '@/base'
@@ -11,9 +12,9 @@ import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig } from '
 
 import app from './app'
 
-const { PORT } = GlobalConfig
+const { HTTP_PORT, HTTPS_PORT } = GlobalConfig
 
-app.set('port', PORT)
+app.set('port', HTTP_PORT)
 
 const cred = {
   key: fs.readFileSync(path.resolve(__dirname, '../cert/key.local.pem')),
@@ -53,12 +54,12 @@ const showAppInitLog = (port: string) => {
       }`,
       `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Author: ${GlobalAppConfig.APP_AUTHOR.name}`,
       `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] HTTP Server is running on port ${port}`,
-      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] HTTPS Server is running on port 3001`
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] HTTPS Server is running on port ${HTTPS_PORT}`
     ])
   })
 }
 
-httpSocket.of('/websocket').on('connection', (socket) => {
+const websocket = () => (socket: Socket) => {
   console.log('Connected')
   socket.on('disconnect', () => {
     console.log('Disconnected')
@@ -67,20 +68,13 @@ httpSocket.of('/websocket').on('connection', (socket) => {
     console.log(data)
     socket.broadcast.emit('message', data)
   })
-})
+}
 
-httpsSocket.of('/websocket').on('connection', (socket) => {
-  console.log('Connected')
-  socket.on('disconnect', () => {
-    console.log('Disconnected')
-  })
-  socket.on('message', (data) => {
-    console.log(data)
-    socket.broadcast.emit('message', data)
-  })
-})
+httpSocket.of('/websocket').on('connection', websocket)
 
-httpServer.listen(PORT, async () => {
+httpsSocket.of('/websocket').on('connection', websocket)
+
+httpServer.listen(HTTP_PORT, async () => {
   const serverInfo = httpServer.address()
   let port = ''
   if (serverInfo) {
@@ -95,6 +89,4 @@ httpServer.listen(PORT, async () => {
   showAppInitLog(port)
 })
 
-httpsServer.listen(3001, () => {
-  console.log(3001)
-})
+httpsServer.listen(HTTPS_PORT)
