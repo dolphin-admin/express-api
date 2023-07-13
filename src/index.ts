@@ -16,8 +16,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // 允许所有的跨域请求
-    methods: ['GET', 'POST']
+    origin: '*'
   }
 })
 
@@ -44,8 +43,6 @@ const showAppInitLog = (port: string) => {
 }
 
 const websocket = io.of('/websocket')
-
-console.log(websocket)
 
 websocket.on('connection', (socket) => {
   console.log('Connected')
