@@ -23,11 +23,7 @@ const cred = {
 const httpServer = http.createServer(app)
 const httpsServer = https.createServer(cred, app)
 
-const httpSocket = new Server(httpServer, {
-  cors: {
-    origin: '*'
-  }
-})
+const httpSocket = new Server(httpServer)
 
 const httpsSocket = new Server(httpsServer, {
   cors: {
@@ -58,7 +54,7 @@ const showAppInitLog = (port: string) => {
   })
 }
 
-const websocket = () => (socket: Socket) => {
+const websocket = (socket: Socket) => {
   console.log('Connected')
   socket.on('disconnect', () => {
     console.log('Disconnected')
