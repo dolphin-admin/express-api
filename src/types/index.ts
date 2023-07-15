@@ -21,6 +21,8 @@ export interface PageRequestModel {
   page: number
   pageSize: number
   searchText?: string
+  startDate?: Date
+  endDate?: Date
 }
 
 export interface PageResponseModel extends PageRequestModel {

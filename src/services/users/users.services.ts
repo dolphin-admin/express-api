@@ -1,4 +1,4 @@
-import { type User } from '@prisma/client'
+import type { User } from '@prisma/client'
 
 import { AuthType, PrismaAction, PrismaQuery } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
@@ -13,12 +13,54 @@ export const filterSafeUserInfo = <T extends { password: string }>(user: T): Omi
 }
 
 export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOptions): Promise<PageUsersModel> => {
-  const { page, pageSize } = pageModel
+  const { page, pageSize, searchText, startDate, endDate } = pageModel
   const { t, lang } = options || {}
+
+  let searchTextNumber: number | undefined
+  if (searchText && /^\d+$/.test(searchText)) {
+    const tempNumber = BigInt(searchText)
+    if (tempNumber <= BigInt(Number.MAX_SAFE_INTEGER) && tempNumber >= BigInt(Number.MIN_SAFE_INTEGER)) {
+      searchTextNumber = Number(tempNumber)
+    }
+  }
 
   const users = await PrismaQuery.user.findMany({
     where: {
-      ...PrismaAction.notDeleted()
+      ...PrismaAction.notDeleted(),
+      createdAt: {
+        ...(startDate && { gte: startDate }),
+        ...(endDate && { lte: endDate })
+      },
+      OR: searchText
+        ? [
+            {
+              username: {
+                contains: searchText
+              }
+            },
+            {
+              phoneNumber: {
+                contains: searchText
+              }
+            },
+            {
+              email: {
+                contains: searchText
+              }
+            },
+            {
+              name: {
+                contains: searchText
+              }
+            },
+            {
+              nickName: {
+                contains: searchText
+              }
+            },
+            ...(searchTextNumber ? [{ id: { equals: searchTextNumber } }] : [])
+          ]
+        : undefined
     },
     orderBy: {
       createdAt: 'desc'
