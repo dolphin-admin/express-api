@@ -21,7 +21,7 @@ const router: Router = express.Router()
 // 用户列表
 router.get('/', async (request: Request, response: BasePageResponse<PageUserModel[]>) => {
   const { t, lang } = request
-  const { page, pageSize } = request.query
+  const { page, pageSize, searchText, startDate, endDate } = request.query
   if (!page || !pageSize) {
     response.status(400).json({
       message: t('Page.Require')
@@ -38,7 +38,10 @@ router.get('/', async (request: Request, response: BasePageResponse<PageUserMode
 
   const pageModel: PageRequestModel = {
     page: Number(page),
-    pageSize: Number(pageSize)
+    pageSize: Number(pageSize),
+    searchText: searchText?.toString(),
+    startDate: startDate?.toString() ? new Date(startDate.toString()) : undefined,
+    endDate: endDate?.toString() ? new Date(endDate.toString()) : undefined
   }
 
   const { users, ...pageResult } = await UsersService.getUsers(pageModel, { t, lang })
