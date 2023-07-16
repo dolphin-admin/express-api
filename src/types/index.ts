@@ -23,6 +23,8 @@ export interface PageRequestModel {
   searchText?: string
   startDate?: Date
   endDate?: Date
+  sort?: string
+  order?: string
 }
 
 export interface PageResponseModel extends PageRequestModel {

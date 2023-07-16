@@ -1,9 +1,15 @@
 import type { User } from '@prisma/client'
 
 import { AuthType, PrismaAction, PrismaQuery } from '@/shared'
-import type { PageRequestModel, ServiceOptions } from '@/types'
+import type { ServiceOptions } from '@/types'
 
-import type { PageUsersModel, UserExistModel, UserInputBaseModel, UserUpdateModel } from './users.models'
+import type {
+  PageUsersModel,
+  UserExistModel,
+  UserInputBaseModel,
+  UserPageRequestModel,
+  UserUpdateModel
+} from './users.models'
 import { genderLabelKeyMap } from './users.models'
 
 export const filterSafeUserInfo = <T extends { password: string }>(user: T): Omit<T, 'password'> => {
@@ -12,8 +18,8 @@ export const filterSafeUserInfo = <T extends { password: string }>(user: T): Omi
   return filteredUser
 }
 
-export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOptions): Promise<PageUsersModel> => {
-  const { page, pageSize, searchText, startDate, endDate } = pageModel
+export const getUsers = async (pageModel: UserPageRequestModel, options?: ServiceOptions): Promise<PageUsersModel> => {
+  const { page, pageSize, searchText, startDate, endDate, sort, order, authTypes } = pageModel
   const { t, lang } = options || {}
 
   let searchTextNumber: number | undefined
@@ -24,13 +30,26 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
     }
   }
 
+  const sortFields = (sort ?? 'createdAt').split(',')
+  const orderFields = (order ?? 'desc').split(',')
+
+  const orderBy = sortFields.map((field: string, index) => ({
+    [field]: orderFields[index]
+  }))
+
+  const authTypesList = authTypes?.split(',').map((authType) => Number(authType))
+
   const users = await PrismaQuery.user.findMany({
     where: {
       ...PrismaAction.notDeleted(),
-      createdAt: {
-        ...(startDate && { gte: startDate }),
-        ...(endDate && { lte: endDate })
-      },
+      AND: [
+        {
+          createdAt: {
+            ...(startDate && { gte: startDate }),
+            ...(endDate && { lte: endDate })
+          }
+        }
+      ],
       OR: searchText
         ? [
             {
@@ -60,11 +79,18 @@ export const getUsers = async (pageModel: PageRequestModel, options?: ServiceOpt
             },
             ...(searchTextNumber ? [{ id: { equals: searchTextNumber } }] : [])
           ]
-        : undefined
+        : undefined,
+      ...(authTypesList && {
+        auths: {
+          some: {
+            authType: {
+              in: authTypesList
+            }
+          }
+        }
+      })
     },
-    orderBy: {
-      createdAt: 'desc'
-    },
+    orderBy,
     skip: (page - 1) * pageSize,
     take: pageSize,
     include: {

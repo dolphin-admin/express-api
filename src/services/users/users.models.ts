@@ -1,6 +1,10 @@
 import type { User } from '@prisma/client'
 
-import type { BaseResponse, PageResponseModel } from '@/types'
+import type { BaseResponse, PageRequestModel, PageResponseModel } from '@/types'
+
+export interface UserPageRequestModel extends PageRequestModel {
+  authTypes?: string
+}
 
 export type OmitPassword<T> = Omit<T, 'password'>
 

@@ -9,19 +9,21 @@ import type {
   UserChangePasswordModel,
   UserCreateInputModel,
   UserCreateResponse,
+  UserPageRequestModel,
   UserResetPasswordModel,
   UserUpdateModel
 } from '@/services'
 import { UsersService } from '@/services'
 import { passwordEquals, passwordHash } from '@/shared'
-import type { BasePageResponse, BaseResponse, PageRequestModel } from '@/types'
+import type { BasePageResponse, BaseResponse } from '@/types'
 
 const router: Router = express.Router()
 
 // 用户列表
 router.get('/', async (request: Request, response: BasePageResponse<PageUserModel[]>) => {
   const { t, lang } = request
-  const { page, pageSize, searchText, startDate, endDate } = request.query
+  const { page, pageSize, searchText, startDate, endDate, sort, order, authTypes } = request.query
+
   if (!page || !pageSize) {
     response.status(400).json({
       message: t('Page.Require')
@@ -36,12 +38,15 @@ router.get('/', async (request: Request, response: BasePageResponse<PageUserMode
     return
   }
 
-  const pageModel: PageRequestModel = {
+  const pageModel: UserPageRequestModel = {
     page: Number(page),
     pageSize: Number(pageSize),
     searchText: searchText?.toString(),
     startDate: startDate?.toString() ? new Date(startDate.toString()) : undefined,
-    endDate: endDate?.toString() ? new Date(endDate.toString()) : undefined
+    endDate: endDate?.toString() ? new Date(endDate.toString()) : undefined,
+    sort: typeof sort === 'string' ? sort : undefined,
+    order: typeof order === 'string' ? order : undefined,
+    authTypes: authTypes?.toString()
   }
 
   const { users, ...pageResult } = await UsersService.getUsers(pageModel, { t, lang })
