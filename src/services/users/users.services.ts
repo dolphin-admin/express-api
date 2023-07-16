@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import type { Prisma, User } from '@prisma/client'
 
 import { AuthType, PrismaAction, PrismaQuery } from '@/shared'
 import type { ServiceOptions } from '@/types'
@@ -33,63 +33,65 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
   const sortFields = (sort ?? 'createdAt').split(',')
   const orderFields = (order ?? 'desc').split(',')
 
+  const authTypesList = authTypes?.split(',').map((authType) => Number(authType))
+
+  const where: Prisma.UserWhereInput = {
+    ...PrismaAction.notDeleted(),
+    AND: [
+      {
+        createdAt: {
+          ...(startDate && { gte: startDate }),
+          ...(endDate && { lte: endDate })
+        }
+      }
+    ],
+    OR: searchText
+      ? [
+          {
+            username: {
+              contains: searchText
+            }
+          },
+          {
+            phoneNumber: {
+              contains: searchText
+            }
+          },
+          {
+            email: {
+              contains: searchText
+            }
+          },
+          {
+            name: {
+              contains: searchText
+            }
+          },
+          {
+            nickName: {
+              contains: searchText
+            }
+          },
+          ...(searchTextNumber ? [{ id: { equals: searchTextNumber } }] : [])
+        ]
+      : undefined,
+    ...(authTypesList && {
+      auths: {
+        some: {
+          authType: {
+            in: authTypesList
+          }
+        }
+      }
+    })
+  }
+
   const orderBy = sortFields.map((field: string, index) => ({
     [field]: orderFields[index]
   }))
 
-  const authTypesList = authTypes?.split(',').map((authType) => Number(authType))
-
   const users = await PrismaQuery.user.findMany({
-    where: {
-      ...PrismaAction.notDeleted(),
-      AND: [
-        {
-          createdAt: {
-            ...(startDate && { gte: startDate }),
-            ...(endDate && { lte: endDate })
-          }
-        }
-      ],
-      OR: searchText
-        ? [
-            {
-              username: {
-                contains: searchText
-              }
-            },
-            {
-              phoneNumber: {
-                contains: searchText
-              }
-            },
-            {
-              email: {
-                contains: searchText
-              }
-            },
-            {
-              name: {
-                contains: searchText
-              }
-            },
-            {
-              nickName: {
-                contains: searchText
-              }
-            },
-            ...(searchTextNumber ? [{ id: { equals: searchTextNumber } }] : [])
-          ]
-        : undefined,
-      ...(authTypesList && {
-        auths: {
-          some: {
-            authType: {
-              in: authTypesList
-            }
-          }
-        }
-      })
-    },
+    where,
     orderBy,
     skip: (page - 1) * pageSize,
     take: pageSize,
@@ -111,9 +113,7 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
   })
 
   const total = await PrismaQuery.user.count({
-    where: {
-      ...PrismaAction.notDeleted()
-    }
+    where
   })
 
   return {
