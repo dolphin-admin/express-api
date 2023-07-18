@@ -1,1 +1,5 @@
+export { default as AuthController } from './auth'
+export { default as BaseController } from './base'
+export { default as SettingsController } from './settings'
 export { default as UploadController } from './upload'
+export { default as UsersController } from './users'

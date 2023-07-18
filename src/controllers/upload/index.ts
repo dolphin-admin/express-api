@@ -1,8 +1,7 @@
 import { Request } from 'express'
 
-import { Auth, Controller, Middleware, Post } from '@/decorators'
+import { Auth, Controller, Post, UploadFile, UploadFiles } from '@/decorators'
 import { UploadService } from '@/services'
-import { baseUpload } from '@/shared'
 import { BaseResponse } from '@/types'
 
 @Controller('/upload')
@@ -11,8 +10,8 @@ class UploadController {
   /**
    * 上传文件
    */
+  @UploadFile()
   @Post('/')
-  @Middleware(baseUpload.single('file'))
   async uploadFile(request: Request, response: BaseResponse<Express.Multer.File>) {
     const { file, t } = request
 
@@ -38,8 +37,8 @@ class UploadController {
   /**
    * 批量上传文件
    */
+  @UploadFiles()
   @Post('/batch')
-  @Middleware(baseUpload.array('files'))
   async uploadFiles(request: Request, response: BaseResponse<Express.Multer.File[]>) {
     const { files, t } = request
 

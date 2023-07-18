@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 
 import { validateToken } from '@/middlewares'
+import { baseUpload } from '@/shared'
 
 type IMiddleware = (req: Request, res: Response, next: NextFunction) => void
 
@@ -31,4 +32,18 @@ export function Middleware(...middlewares: IMiddleware[]) {
  */
 export function Auth() {
   return Middleware(validateToken)
+}
+
+/**
+ * 上传文件装饰器
+ */
+export function UploadFile() {
+  return Middleware(baseUpload.single('file'))
+}
+
+/**
+ * 批量上传文件装饰器
+ */
+export function UploadFiles() {
+  return Middleware(baseUpload.array('files'))
 }

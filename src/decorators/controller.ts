@@ -13,14 +13,15 @@ export function Controller(path: string): ClassDecorator {
  * @param path 请求路径
  */
 function Route(method: string, path: string) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    if (!target.routes) {
+  return function (target: any, propertyKey: string) {
+    if (!Array.isArray(target.routes)) {
       target.routes = []
     }
     target.routes.push({
-      method,
       path,
-      handler: descriptor.value
+      method,
+      handler: target[propertyKey],
+      middlewares: []
     })
   }
 }
