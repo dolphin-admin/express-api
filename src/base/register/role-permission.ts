@@ -4,31 +4,31 @@ import {
   errorLog,
   getCurrentTime,
   primaryLog,
-  PrismaQuery,
+  prisma,
   SEED_SUPER_ADMIN_ROLE_KEY,
   SEED_SUPER_ADMIN_USERNAME
 } from '@/shared'
 
 const rolePermissionRegister = async () => {
   try {
-    const superAdminUser = await PrismaQuery.user.findUnique({
+    const superAdminUser = await prisma.user.findUnique({
       where: {
         username: SEED_SUPER_ADMIN_USERNAME
       }
     })
 
-    const superAdminRole = await PrismaQuery.role.findUnique({
+    const superAdminRole = await prisma.role.findUnique({
       where: {
         key: SEED_SUPER_ADMIN_ROLE_KEY
       }
     })
 
-    const allPermissions = await PrismaQuery.permission.findMany()
+    const allPermissions = await prisma.permission.findMany()
 
     if (superAdminRole) {
       await Promise.all(
         allPermissions.map(async (permission) => {
-          const existingRolePermission = await PrismaQuery.rolePermission.findFirst({
+          const existingRolePermission = await prisma.rolePermission.findFirst({
             where: {
               roleId: superAdminRole.id,
               permissionId: permission.id
@@ -36,7 +36,7 @@ const rolePermissionRegister = async () => {
           })
 
           if (!existingRolePermission) {
-            await PrismaQuery.rolePermission.create({
+            await prisma.rolePermission.create({
               data: {
                 role: { connect: { id: superAdminRole.id } },
                 permission: { connect: { id: permission.id } }
@@ -58,14 +58,14 @@ const rolePermissionRegister = async () => {
 
     await Promise.all(
       builtInRoleItems.map(async (builtInRoleItem) => {
-        const existingRole = await PrismaQuery.role.findUnique({
+        const existingRole = await prisma.role.findUnique({
           where: {
             key: builtInRoleItem.key
           }
         })
 
         if (!existingRole) {
-          await PrismaQuery.role.create({
+          await prisma.role.create({
             data: {
               key: builtInRoleItem.key,
               nameEn: builtInRoleItem.nameEn,
@@ -83,14 +83,14 @@ const rolePermissionRegister = async () => {
 
     await Promise.all(
       builtInPermissionItems.map(async (builtInPermissionItem) => {
-        const existingPermission = await PrismaQuery.permission.findUnique({
+        const existingPermission = await prisma.permission.findUnique({
           where: {
             key: builtInPermissionItem.key
           }
         })
 
         if (!existingPermission) {
-          await PrismaQuery.permission.create({
+          await prisma.permission.create({
             data: {
               key: builtInPermissionItem.key,
               nameEn: builtInPermissionItem.nameEn,
@@ -110,7 +110,7 @@ const rolePermissionRegister = async () => {
       builtInRoleKeys.map(async (builtInRoleKey) => {
         const builtInPermissions = builtInRolePermissions[builtInRoleKey] as BuiltInPermission[]
 
-        const currentRole = await PrismaQuery.role.findUnique({
+        const currentRole = await prisma.role.findUnique({
           where: {
             key: builtInRoleKey
           }
@@ -118,13 +118,13 @@ const rolePermissionRegister = async () => {
 
         await Promise.all(
           builtInPermissions.map(async (builtInPermissionKey) => {
-            const currentPermission = await PrismaQuery.permission.findUnique({
+            const currentPermission = await prisma.permission.findUnique({
               where: {
                 key: builtInPermissionKey
               }
             })
 
-            const existingRolePermission = await PrismaQuery.rolePermission.findFirst({
+            const existingRolePermission = await prisma.rolePermission.findFirst({
               where: {
                 roleId: currentRole!.id,
                 permissionId: currentPermission!.id
@@ -132,7 +132,7 @@ const rolePermissionRegister = async () => {
             })
 
             if (!existingRolePermission) {
-              await PrismaQuery.rolePermission.create({
+              await prisma.rolePermission.create({
                 data: {
                   role: { connect: { id: currentRole!.id } },
                   permission: { connect: { id: currentPermission!.id } },

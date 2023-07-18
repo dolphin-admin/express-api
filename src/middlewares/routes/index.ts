@@ -1,2 +1,2 @@
-export * from './404.middleware'
-export * from './500.middleware'
+export * from './404'
+export * from './500'

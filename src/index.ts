@@ -23,7 +23,11 @@ const cred = {
 const httpServer = http.createServer(app)
 const httpsServer = https.createServer(cred, app)
 
-const httpSocket = new Server(httpServer)
+const httpSocket = new Server(httpServer, {
+  cors: {
+    origin: '*'
+  }
+})
 
 const httpsSocket = new Server(httpsServer, {
   cors: {

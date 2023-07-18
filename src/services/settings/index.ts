@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import type { SettingsInputModel } from '@/models'
-import { generateUUID, PrismaAction, PrismaQuery } from '@/shared'
+import { generateUUID, prisma } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
 class SettingsService {
@@ -11,19 +11,12 @@ class SettingsService {
   async getSettings(pageModel: PageRequestModel) {
     const { page, pageSize } = pageModel
 
-    const settings = await PrismaQuery.setting.findMany({
-      where: {
-        ...PrismaAction.notDeleted()
-      },
+    const settings = await prisma.setting.findMany({
       skip: (page - 1) * pageSize,
       take: pageSize
     })
 
-    const total = await PrismaQuery.setting.count({
-      where: {
-        ...PrismaAction.notDeleted()
-      }
-    })
+    const total = await prisma.setting.count()
 
     return {
       settings,
@@ -36,10 +29,9 @@ class SettingsService {
    * 获取指定配置项
    */
   async getSettingByKey(key: string) {
-    return PrismaQuery.setting.findFirst({
+    return prisma.setting.findFirst({
       where: {
-        key,
-        ...PrismaAction.notDeleted()
+        key
       }
     })
   }
@@ -48,12 +40,11 @@ class SettingsService {
    * 批量获取指定配置项
    */
   async getSettingsByKeys(keys: string[]) {
-    return PrismaQuery.setting.findMany({
+    return prisma.setting.findMany({
       where: {
         key: {
           in: keys
-        },
-        ...PrismaAction.notDeleted()
+        }
       }
     })
   }
@@ -63,7 +54,7 @@ class SettingsService {
    */
   async createSetting(setting: SettingsInputModel, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return PrismaQuery.setting.create({
+    return prisma.setting.create({
       data: {
         ...setting,
         enabled: true,
@@ -78,7 +69,7 @@ class SettingsService {
    */
   async createSettings(settings: SettingsInputModel[], options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return PrismaQuery.setting.createMany({
+    return prisma.setting.createMany({
       data: settings.map((setting) => ({
         ...setting,
         uuid: generateUUID(),
@@ -95,7 +86,7 @@ class SettingsService {
   async updateSettingByKey(setting: SettingsInputModel, options?: ServiceOptions) {
     const { key, value, description } = setting
     const { currentUser } = options || {}
-    return PrismaQuery.setting.update({
+    return prisma.setting.update({
       where: {
         key
       },
@@ -112,7 +103,7 @@ class SettingsService {
    */
   async deleteSettingByKey(key: string, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return PrismaQuery.setting.update({
+    return prisma.setting.update({
       where: {
         key
       },
@@ -129,7 +120,7 @@ class SettingsService {
    */
   async enableSettingByKey(key: string, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return PrismaQuery.setting.update({
+    return prisma.setting.update({
       where: {
         key
       },
@@ -145,7 +136,7 @@ class SettingsService {
    */
   async banSettingByKey(key: string, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return PrismaQuery.setting.update({
+    return prisma.setting.update({
       where: {
         key
       },

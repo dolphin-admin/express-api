@@ -12,8 +12,7 @@ import {
   generateRandomString,
   GlobalAuthConfig,
   passwordEquals,
-  PrismaAction,
-  PrismaQuery,
+  prisma,
   SEED_SUPER_ADMIN_PASSWORD
 } from '@/shared'
 
@@ -163,21 +162,20 @@ router.post('/github', async (request: Request, response: UserLoginResponse) => 
       return
     }
 
-    const authUser = await PrismaQuery.auth.findFirst({
+    const authUser = await prisma.auth.findFirst({
       include: {
         user: true
       },
       where: {
         authType: AuthType.GitHub,
-        openId: githubUserData.id.toString(),
-        ...PrismaAction.notDeleted()
+        openId: githubUserData.id.toString()
       }
     })
 
     if (authUser) {
       const shouldChangeAccessToken = authUser.token !== githubToken
       if (shouldChangeAccessToken) {
-        await PrismaQuery.auth.update({
+        await prisma.auth.update({
           where: {
             id: authUser.id
           },
@@ -208,7 +206,7 @@ router.post('/github', async (request: Request, response: UserLoginResponse) => 
         message: t('Login.Success')
       })
     } else {
-      const user = await PrismaQuery.user.create({
+      const user = await prisma.user.create({
         data: {
           username: `User-${generateRandomString(8)}`,
           password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
@@ -333,21 +331,20 @@ router.post('/google', async (request: Request, response: UserLoginResponse) => 
       return
     }
 
-    const authUser = await PrismaQuery.auth.findFirst({
+    const authUser = await prisma.auth.findFirst({
       include: {
         user: true
       },
       where: {
         authType: AuthType.Google,
-        openId: googleUserData.id.toString(),
-        ...PrismaAction.notDeleted()
+        openId: googleUserData.id.toString()
       }
     })
 
     if (authUser) {
       const shouldChangeAccessToken = authUser.token !== googleToken
       if (shouldChangeAccessToken) {
-        await PrismaQuery.auth.update({
+        await prisma.auth.update({
           where: {
             id: authUser.id
           },
@@ -378,7 +375,7 @@ router.post('/google', async (request: Request, response: UserLoginResponse) => 
         message: t('Login.Success')
       })
     } else {
-      const user = await PrismaQuery.user.create({
+      const user = await prisma.user.create({
         data: {
           username: `User-${generateRandomString(8)}`,
           password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),

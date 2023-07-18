@@ -1,49 +1,100 @@
 import { PrismaClient } from '@prisma/client'
+import util from 'util'
 
 import { GlobalConfig } from './config'
 
 interface CustomNodeJSGlobal extends Global {
-  PrismaQuery: PrismaClient
+  prisma: PrismaClient
 }
 
 declare const global: CustomNodeJSGlobal
 
-export const PrismaQuery: PrismaClient =
-  global.PrismaQuery ||
+export const prisma: PrismaClient =
+  global.prisma ||
   new PrismaClient({
-    log: GlobalConfig.IS_DEVELOPMENT ? ['query', 'info', 'warn', 'error'] : ['query', 'info', 'warn', 'error'],
+    log: GlobalConfig.IS_DEVELOPMENT ? ['warn', 'error'] : ['query', 'info', 'warn', 'error'],
     errorFormat: 'pretty'
   })
-
-// Logging Middleware
-PrismaQuery.$use(async (params, next) => {
-  if (params.action === 'update' || params.action === 'updateMany') {
-    // eslint-disable-next-line no-param-reassign
-    params.args.data.updatedAt = new Date().toISOString()
-  }
-  const before = Date.now()
-  const result = await next(params)
-  const after = Date.now()
-  console.log(`Query ${params.model}.${params.action} took ${after - before}ms`)
-  return result
-})
+    // 日志
+    .$extends({
+      query: {
+        async $allOperations({ operation, model, args, query }) {
+          const start = performance.now()
+          const result = await query(args)
+          const end = performance.now()
+          const time = end - start
+          console.log(
+            util.inspect(
+              {
+                model,
+                operation,
+                args,
+                time
+              },
+              {
+                showHidden: false,
+                depth: null,
+                colors: true
+              }
+            )
+          )
+          return result
+        },
+        $allModels: {
+          // 过滤软删除
+          async findFirst({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findMany({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findFirstOrThrow({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findUnique({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findUniqueOrThrow({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async count({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          // 自动更新修改时间
+          async update({ args, query }) {
+            args.data.updatedAt = new Date().toISOString()
+            return query(args)
+          },
+          async updateMany({ args, query }) {
+            args.data.updatedAt = new Date().toISOString()
+            return query(args)
+          }
+        }
+      }
+    })
+    // 忽略敏感字段
+    .$extends({
+      name: 'Ignore sensitive fields',
+      result: {
+        user: {
+          password: {
+            needs: {},
+            compute() {
+              return undefined
+            }
+          }
+        }
+      }
+    })
 
 if (GlobalConfig.IS_DEVELOPMENT) {
-  global.PrismaQuery = PrismaQuery
-}
-
-export class PrismaAction {
-  static deleted = () => ({
-    deletedAt: {
-      not: null
-    }
-  })
-
-  static notDeleted = () => ({
-    deletedAt: {
-      equals: null
-    }
-  })
+  global.prisma = prisma
 }
 
 export const SEED_SUPER_ADMIN_USERNAME = 'SuperAdmin'

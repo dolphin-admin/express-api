@@ -1,1 +1,1 @@
-export * from './validateToken.middleware'
+export * from './validateToken'

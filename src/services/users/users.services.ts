@@ -1,6 +1,6 @@
 import type { Prisma, User } from '@prisma/client'
 
-import { AuthType, PrismaAction, PrismaQuery } from '@/shared'
+import { AuthType, prisma } from '@/shared'
 import type { ServiceOptions } from '@/types'
 
 import type {
@@ -36,7 +36,6 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
   const authTypesList = authTypes?.split(',').map((authType) => Number(authType))
 
   const where: Prisma.UserWhereInput = {
-    ...PrismaAction.notDeleted(),
     AND: [
       {
         createdAt: {
@@ -90,7 +89,7 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
     [field]: orderFields[index]
   }))
 
-  const users = await PrismaQuery.user.findMany({
+  const users = await prisma.user.findMany({
     where,
     orderBy,
     skip: (page - 1) * pageSize,
@@ -99,9 +98,6 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
       userRoles: {
         select: {
           role: true
-        },
-        where: {
-          ...PrismaAction.notDeleted()
         }
       },
       auths: {
@@ -112,7 +108,7 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
     }
   })
 
-  const total = await PrismaQuery.user.count({
+  const total = await prisma.user.count({
     where
   })
 
@@ -142,16 +138,15 @@ export const getUsers = async (pageModel: UserPageRequestModel, options?: Servic
 }
 
 export const getUserById = async (id: number): Promise<User | null> =>
-  PrismaQuery.user.findFirst({
+  prisma.user.findFirst({
     where: {
-      id,
-      ...PrismaAction.notDeleted()
+      id
     }
   })
 
 export const createUser = async (user: UserInputBaseModel, options?: ServiceOptions): Promise<User> => {
   const { currentUser } = options || {}
-  return PrismaQuery.user.create({
+  return prisma.user.create({
     data: {
       ...user,
       verified: true,
@@ -165,7 +160,7 @@ export const updateUser = async (id: number, user: UserUpdateModel, options?: Se
   const { currentUser } = options || {}
   const { birthDate } = user
 
-  return PrismaQuery.user.update({
+  return prisma.user.update({
     where: {
       id
     },
@@ -179,7 +174,7 @@ export const updateUser = async (id: number, user: UserUpdateModel, options?: Se
 
 export const deleteUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { currentUser } = options || {}
-  return PrismaQuery.user.update({
+  return prisma.user.update({
     where: {
       id
     },
@@ -192,10 +187,9 @@ export const deleteUser = async (id: number, options?: ServiceOptions): Promise<
 }
 
 export const alreadyExists = async (username: string): Promise<UserExistModel> => {
-  const user = await PrismaQuery.user.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
-      username,
-      ...PrismaAction.notDeleted()
+      username
     }
   })
   return { isExist: !!user, user }
@@ -203,7 +197,7 @@ export const alreadyExists = async (username: string): Promise<UserExistModel> =
 
 export const verifyUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { currentUser } = options || {}
-  return PrismaQuery.user.update({
+  return prisma.user.update({
     where: {
       id
     },
@@ -216,7 +210,7 @@ export const verifyUser = async (id: number, options?: ServiceOptions): Promise<
 
 export const activateUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { currentUser } = options || {}
-  return PrismaQuery.user.update({
+  return prisma.user.update({
     where: {
       id
     },
@@ -229,7 +223,7 @@ export const activateUser = async (id: number, options?: ServiceOptions): Promis
 
 export const deactivateUser = async (id: number, options?: ServiceOptions): Promise<User | null> => {
   const { currentUser } = options || {}
-  return PrismaQuery.user.update({
+  return prisma.user.update({
     where: {
       id
     },

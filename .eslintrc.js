@@ -75,7 +75,7 @@ module.exports = {
           'error',
           {
             props: true,
-            ignorePropertyModificationsFor: ['target', 'req', 'request'] // 装饰器中会修改 target, 中间件会修改 req
+            ignorePropertyModificationsFor: ['target', 'req', 'request', 'args'] // 装饰器中会修改 target, 中间件会修改 req, prisma Extensions 会修改 args
           }
         ]
       }
