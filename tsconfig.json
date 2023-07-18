@@ -15,7 +15,9 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true, // 装饰器支持
+    "emitDecoratorMetadata": true
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", ".eslintrc.js"],
