@@ -69,7 +69,15 @@ module.exports = {
         'unused-imports/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
         'node/no-unsupported-features/es-syntax': ['error', { ignores: ['modules'] }],
         'node/no-missing-import': 'off',
-        'import/prefer-default-export': 'off'
+        'import/prefer-default-export': 'off',
+        'class-methods-use-this': 'off', // 通常 Controller Class 内部不会使用 this
+        'no-param-reassign': [
+          'error',
+          {
+            props: true,
+            ignorePropertyModificationsFor: ['target', 'req', 'request', 'args'] // 装饰器中会修改 target, 中间件会修改 req, prisma Extensions 会修改 args
+          }
+        ]
       }
     }
   ]
