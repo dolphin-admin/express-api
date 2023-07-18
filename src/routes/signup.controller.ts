@@ -1,11 +1,11 @@
 import type { Request, Router } from 'express'
 import express from 'express'
 
-import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserSignupInputModel, UserSignupResponse } from '@/services'
 import { UsersService } from '@/services'
 import { passwordHash } from '@/shared'
+import type { JWTModel } from '@/types'
 
 const router: Router = express.Router()
 
@@ -68,12 +68,12 @@ router.post('/', async (request: Request, response: UserSignupResponse) => {
     password: await passwordHash(password)
   })
 
-  const jwtUserModel: JWTUserModel = {
+  const jwtModel: JWTModel = {
     id: user.id,
     username: user.username
   }
 
-  const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+  const accessToken = JWTManager.generateAccessToken(jwtModel)
   if (!accessToken) {
     response.status(401).json({
       message: t('Token.Generate.Failed')

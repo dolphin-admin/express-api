@@ -3,7 +3,6 @@ import axios from 'axios'
 import type { Request, Router } from 'express'
 import express from 'express'
 
-import type { JWTUserModel } from '@/core'
 import { JWTManager } from '@/core'
 import type { UserLoginInputModel, UserLoginResponse } from '@/services'
 import { UsersService } from '@/services'
@@ -15,6 +14,7 @@ import {
   prisma,
   SEED_SUPER_ADMIN_PASSWORD
 } from '@/shared'
+import type { JWTModel } from '@/types'
 
 const POST_GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 const GET_GITHUB_USER_URL = 'https://api.github.com/user'
@@ -71,11 +71,11 @@ router.post('/', async (request: Request, response: UserLoginResponse) => {
     return
   }
 
-  const jwtUserModel: JWTUserModel = {
+  const jwtModel: JWTModel = {
     id: user.id,
     username: user.username
   }
-  const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+  const accessToken = JWTManager.generateAccessToken(jwtModel)
   if (!accessToken) {
     response.status(401).json({
       message: t('Token.Generate.Failed')
@@ -185,12 +185,12 @@ router.post('/github', async (request: Request, response: UserLoginResponse) => 
         })
       }
 
-      const jwtUserModel: JWTUserModel = {
+      const jwtModel: JWTModel = {
         id: authUser.userId,
         username: authUser.user.username
       }
 
-      const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+      const accessToken = JWTManager.generateAccessToken(jwtModel)
       if (!accessToken) {
         response.status(401).json({
           message: t('Token.Generate.Failed')
@@ -227,12 +227,12 @@ router.post('/github', async (request: Request, response: UserLoginResponse) => 
         }
       })
 
-      const jwtUserModel: JWTUserModel = {
+      const jwtModel: JWTModel = {
         id: user.id,
         username: user.username
       }
 
-      const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+      const accessToken = JWTManager.generateAccessToken(jwtModel)
       if (!accessToken) {
         response.status(401).json({
           message: t('Token.Generate.Failed')
@@ -354,12 +354,12 @@ router.post('/google', async (request: Request, response: UserLoginResponse) => 
         })
       }
 
-      const jwtUserModel: JWTUserModel = {
+      const jwtModel: JWTModel = {
         id: authUser.userId,
         username: authUser.user.username
       }
 
-      const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+      const accessToken = JWTManager.generateAccessToken(jwtModel)
       if (!accessToken) {
         response.status(401).json({
           message: t('Token.Generate.Failed')
@@ -396,12 +396,12 @@ router.post('/google', async (request: Request, response: UserLoginResponse) => 
         }
       })
 
-      const jwtUserModel: JWTUserModel = {
+      const jwtModel: JWTModel = {
         id: user.id,
         username: user.username
       }
 
-      const accessToken = JWTManager.generateAccessToken(jwtUserModel)
+      const accessToken = JWTManager.generateAccessToken(jwtModel)
       if (!accessToken) {
         response.status(401).json({
           message: t('Token.Generate.Failed')

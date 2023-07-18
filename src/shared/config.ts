@@ -1,7 +1,10 @@
-import { getEnvNumber, getEnvStr } from './environments.private'
-import type { ENV } from './global-config.type'
-import { getAppDescription, getAppName, getAppVersion, getAuthorInfo } from './package-json-reader.private'
+import type { ENV } from '@/types'
 
+import { getAppDescription, getAppName, getAppVersion, getAuthorInfo, getEnvNumber, getEnvStr } from './env'
+
+/**
+ * 全局配置
+ */
 export const GlobalConfig = Object.freeze({
   ENVIRONMENT: <ENV>getEnvStr('NODE_ENV', 'development'),
   IS_TEST: getEnvStr('NODE_ENV', 'development') === 'test',
@@ -11,6 +14,9 @@ export const GlobalConfig = Object.freeze({
   HTTPS_PORT: getEnvNumber('HTTPS_PORT', 3001)
 })
 
+/**
+ * 全局应用配置
+ */
 export const GlobalAppConfig = Object.freeze({
   APP_NAME: getEnvStr('APP_NAME', getAppName()),
   APP_VERSION: getAppVersion(),
@@ -19,12 +25,18 @@ export const GlobalAppConfig = Object.freeze({
   APP_BASE_URL: getEnvStr('APP_BASE_URL', 'http://localhost:3000')
 })
 
+/**
+ * 全局 JWT 配置
+ */
 export const GlobalJWTConfig = Object.freeze({
   JWT_SECRET: getEnvStr('JWT_SECRET', 'jwtSecretPassphrase'),
   JWT_EXPIRATION: getEnvNumber('JWT_EXPIRATION', 1),
   JWT_REFRESH_EXPIRATION: getEnvNumber('JWT_REFRESH_EXPIRATION', 7)
 })
 
+/**
+ * 全局数据库配置
+ */
 export const GlobalDBConfig = Object.freeze({
   DB_USER: getEnvStr('DB_USER', 'mars-user'),
   DB_PASSWORD: getEnvStr('DB_PASSWORD', 'est-password'),
@@ -34,6 +46,9 @@ export const GlobalDBConfig = Object.freeze({
   DB_URL: getEnvStr('DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/dolphin-admin')
 })
 
+/**
+ * 全局 OAuth2 配置
+ */
 export const GlobalAuthConfig = Object.freeze({
   GITHUB_CLIENT_ID: getEnvStr('GITHUB_CLIENT_ID', ''),
   GITHUB_CLIENT_SECRET: getEnvStr('GITHUB_CLIENT_SECRET', ''),
@@ -42,6 +57,9 @@ export const GlobalAuthConfig = Object.freeze({
   GOOGLE_CLIENT_REDIRECT_URL: getEnvStr('GOOGLE_CLIENT_REDIRECT_URL', '')
 })
 
+/**
+ * 全局文件存储配置
+ */
 export const GlobalFileStorageConfig = Object.freeze({
   FILE_STORAGE_PATH: getEnvStr('FILE_STORAGE_PATH', 'storage')
 })

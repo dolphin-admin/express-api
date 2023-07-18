@@ -38,6 +38,7 @@ export const prisma: PrismaClient =
               }
             )
           )
+          console.log(result)
           return result
         },
         $allModels: {
@@ -74,20 +75,6 @@ export const prisma: PrismaClient =
           async updateMany({ args, query }) {
             args.data.updatedAt = new Date().toISOString()
             return query(args)
-          }
-        }
-      }
-    })
-    // 忽略敏感字段
-    .$extends({
-      name: 'Ignore sensitive fields',
-      result: {
-        user: {
-          password: {
-            needs: {},
-            compute() {
-              return undefined
-            }
           }
         }
       }
