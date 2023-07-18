@@ -36,6 +36,12 @@
     "ID": {
       "Require": "用户 ID 不能为空"
     },
+    "Username": {
+      "Unique": "用户名已存在"
+    },
+    "Email": {
+      "Unique": "邮箱已存在"
+    },
     "NotExist": "用户不存在",
     "Created": "用户创建成功",
     "CreateFailed": "用户创建失败",

@@ -36,6 +36,12 @@
     "ID": {
       "Require": "User ID is required."
     },
+    "Username": {
+      "Unique": "Username already exists."
+    },
+    "Email": {
+      "Unique": "Email already exists."
+    },
     "NotExist": "User does not exist.",
     "Created": "User created.",
     "CreateFailed": "User create failed.",

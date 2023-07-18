@@ -207,7 +207,22 @@ router.patch('/:id(\\d+)', async (request: Request, response: BaseResponse<OmitP
     })
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
+      // 处理唯一索引冲突
+      if (error.code === 'P2002') {
+        const { target } = error.meta || {}
+
+        let errorMessage = ''
+        if ((target as string[]).includes('username')) {
+          errorMessage = t('User.Username.Unique')
+        } else if ((target as string[]).includes('email')) {
+          errorMessage = t('User.Email.Unique')
+        }
+
+        response.status(409).json({
+          message: errorMessage
+        })
+      } else if (error.code === 'P2025') {
+        // 未找到用户信息
         response.status(404).json({
           message: t('User.NotExist')
         })
