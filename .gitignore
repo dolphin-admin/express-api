@@ -17,6 +17,8 @@ pnpm-debug.log*
 .DS_Store
 coverage
 *.local
+.env*
+!.env.example
 
 # Editor
 .vscode/*
@@ -32,4 +34,3 @@ coverage
 
 # Storage dir is where the upload files are stored.
 /storage
-/temp
