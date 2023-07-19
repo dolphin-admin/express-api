@@ -18,6 +18,12 @@ export const getEnvNumber = (key: string, defaultValue: number): number =>
   Number(process.env[String(key)]) || defaultValue
 
 /**
+ * 获取环境变量
+ * @description 布尔类型
+ */
+export const getEnvBoolean = (key: string): boolean => process.env[String(key)] === 'true'
+
+/**
  * 获取 Package.json 文件
  */
 const readPackageJSONSync = () => JSON.parse(fs.readFileSync('package.json', 'utf8'))

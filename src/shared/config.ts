@@ -1,6 +1,14 @@
 import type { ENV } from '@/types'
 
-import { getAppDescription, getAppName, getAppVersion, getAuthorInfo, getEnvNumber, getEnvStr } from './env'
+import {
+  getAppDescription,
+  getAppName,
+  getAppVersion,
+  getAuthorInfo,
+  getEnvBoolean,
+  getEnvNumber,
+  getEnvStr
+} from './env'
 
 /**
  * 全局配置
@@ -12,6 +20,13 @@ export const GlobalConfig = Object.freeze({
   IS_PRODUCTION: getEnvStr('NODE_ENV', 'development') === 'production',
   HTTP_PORT: getEnvNumber('HTTP_PORT', 3000),
   HTTPS_PORT: getEnvNumber('HTTPS_PORT', 3001)
+})
+
+/**
+ * 全局开发配置
+ */
+export const GlobalDevConfig = Object.freeze({
+  DEV_SHOW_LOG: getEnvBoolean('DEV_SHOW_LOG')
 })
 
 /**

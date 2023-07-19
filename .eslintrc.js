@@ -75,9 +75,10 @@ module.exports = {
           'error',
           {
             props: true,
-            ignorePropertyModificationsFor: ['target', 'req', 'request', 'args'] // 装饰器中会修改 target, 中间件会修改 req, prisma Extensions 会修改 args
+            ignorePropertyModificationsFor: ['target', 'descriptor', 'req', 'request', 'args'] // 装饰器中会修改 target, descriptor, 中间件会修改 req, prisma Extensions 会修改 args
           }
-        ]
+        ],
+        '@typescript-eslint/no-useless-constructor': 'off'
       }
     }
   ]

@@ -6,8 +6,8 @@ import https from 'https'
 import path from 'path'
 
 import { AppRegister } from '@/base'
-import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig } from '@/shared'
-import * as Sockets from '@/sockets'
+import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig, GlobalDevConfig } from '@/shared'
+import * as SocketControllers from '@/sockets'
 
 import app from './app'
 
@@ -23,7 +23,9 @@ const httpServer = http.createServer(app)
 const httpsServer = https.createServer(cred, app)
 
 const showAppInitLog = (port: string) => {
-  console.clear()
+  if (GlobalDevConfig.DEV_SHOW_LOG) {
+    console.clear()
+  }
   figlet(GlobalAppConfig.APP_NAME, (err, data) => {
     if (err) {
       console.log('Something went wrong...')
@@ -46,7 +48,7 @@ const showAppInitLog = (port: string) => {
 }
 
 // 注册 Socket
-AppRegister.socketRegister(httpServer, httpsServer, Object.values(Sockets))
+AppRegister.socketRegister(httpServer, httpsServer, Object.values(SocketControllers))
 
 httpServer.listen(HTTP_PORT, async () => {
   const serverInfo = httpServer.address()

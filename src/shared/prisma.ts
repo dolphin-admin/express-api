@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import util from 'util'
 
-import { GlobalConfig } from './config'
+import { GlobalConfig, GlobalDevConfig } from './config'
 
 interface CustomNodeJSGlobal extends Global {
   prisma: PrismaClient
@@ -12,7 +12,12 @@ declare const global: CustomNodeJSGlobal
 export const prisma: PrismaClient =
   global.prisma ||
   new PrismaClient({
-    log: GlobalConfig.IS_DEVELOPMENT ? ['warn', 'error'] : ['query', 'info', 'warn', 'error'],
+    // eslint-disable-next-line no-nested-ternary
+    log: GlobalConfig.IS_DEVELOPMENT
+      ? GlobalDevConfig.DEV_SHOW_LOG
+        ? ['warn', 'error']
+        : []
+      : ['query', 'info', 'warn', 'error'],
     errorFormat: 'pretty'
   })
     // 日志
@@ -23,22 +28,24 @@ export const prisma: PrismaClient =
           const result = await query(args)
           const end = performance.now()
           const time = end - start
-          console.log(
-            util.inspect(
-              {
-                model,
-                operation,
-                args,
-                time
-              },
-              {
-                showHidden: false,
-                depth: null,
-                colors: true
-              }
+          if (GlobalDevConfig.DEV_SHOW_LOG) {
+            console.log(
+              util.inspect(
+                {
+                  model,
+                  operation,
+                  args,
+                  time
+                },
+                {
+                  showHidden: false,
+                  depth: null,
+                  colors: true
+                }
+              )
             )
-          )
-          console.log(result)
+            console.log(result)
+          }
           return result
         },
         $allModels: {
