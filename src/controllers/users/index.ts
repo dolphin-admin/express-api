@@ -88,7 +88,7 @@ class UsersController {
   async getCurrentUser(request: Request, response: BaseResponse<OmitPassword<User>>) {
     const { t } = request
     if (!request.currentUser) {
-      response.status(404).json({
+      response.status(401).json({
         message: t('User.NotExist')
       })
       return
