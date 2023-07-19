@@ -10,8 +10,6 @@ import type { BaseResponse } from '@/types'
 export const validateToken = async (request: Request, response: BaseResponse, next: NextFunction) => {
   const { authorization } = request.headers
 
-  console.log(authorization)
-
   if (!authorization) {
     response.status(401).json({ message: 'Token not found!' })
     return

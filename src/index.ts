@@ -4,11 +4,10 @@ import gradient from 'gradient-string'
 import http from 'http'
 import https from 'https'
 import path from 'path'
-import type { Socket } from 'socket.io'
-import { Server } from 'socket.io'
 
 import { AppRegister } from '@/base'
-import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig } from '@/shared'
+import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig, GlobalDevConfig } from '@/shared'
+import * as SocketControllers from '@/sockets'
 
 import app from './app'
 
@@ -23,20 +22,10 @@ const cred = {
 const httpServer = http.createServer(app)
 const httpsServer = https.createServer(cred, app)
 
-const httpSocket = new Server(httpServer, {
-  cors: {
-    origin: '*'
-  }
-})
-
-const httpsSocket = new Server(httpsServer, {
-  cors: {
-    origin: '*'
-  }
-})
-
 const showAppInitLog = (port: string) => {
-  console.clear()
+  if (GlobalDevConfig.DEV_SHOW_LOG) {
+    console.clear()
+  }
   figlet(GlobalAppConfig.APP_NAME, (err, data) => {
     if (err) {
       console.log('Something went wrong...')
@@ -58,20 +47,8 @@ const showAppInitLog = (port: string) => {
   })
 }
 
-const websocket = (socket: Socket) => {
-  console.log('Connected')
-  socket.on('disconnect', () => {
-    console.log('Disconnected')
-  })
-  socket.on('message', (data) => {
-    console.log(data)
-    socket.broadcast.emit('message', data)
-  })
-}
-
-httpSocket.of('/websocket').on('connection', websocket)
-
-httpsSocket.of('/websocket').on('connection', websocket)
+// 注册 Socket
+AppRegister.socketRegister(httpServer, httpsServer, Object.values(SocketControllers))
 
 httpServer.listen(HTTP_PORT, async () => {
   const serverInfo = httpServer.address()
