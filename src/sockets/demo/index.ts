@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io'
 
 import { Event, Namespace } from '@/decorators'
-import { getCurrentTime } from '@/shared'
+import { batchLog, getCurrentTime, GlobalAppConfig } from '@/shared'
 
 import { UserInfo, UserInfoWithMessage } from './types'
 
@@ -11,15 +11,14 @@ export class DemoController {
   @Event('message')
   handleMessage(socket: Socket, data: UserInfoWithMessage) {
     const sendMessage = {
-      zh_CN: `[ ID: ${data.id}, 用户名：${data.username} ] 发送了 [ ${data.message} ]`,
+      zh_CN: `[ ID: ${data.id}, 用户名：${data.username} ] 发送了内容 [ ${data.message} ]`,
       en_US: `[ ID: ${data.id}, Username: ${data.username} ] has sent [ ${data.message} ]`
     }
-    console.log('-----------------------------------------------------------')
-    console.log('Socket: /demo')
-    console.log('Event: message')
-    console.log(sendMessage.zh_CN)
-    console.log(getCurrentTime())
-    console.log('-----------------------------------------------------------')
+    batchLog([
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Socket: /demo`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Event: message`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] ${sendMessage.zh_CN}`
+    ])
     // 广播消息
     socket.broadcast.emit('message', sendMessage)
   }
@@ -31,12 +30,11 @@ export class DemoController {
       zh_CN: `[ ID: ${data.id}, 用户名：${data.username} ] 建立了连接`,
       en_US: `[ ID: ${data.id}, Username: ${data.username} ] has joined`
     }
-    console.log('-----------------------------------------------------------')
-    console.log('Socket: /demo')
-    console.log('Event: join')
-    console.log(joinMessage.zh_CN)
-    console.log(getCurrentTime())
-    console.log('-----------------------------------------------------------')
+    batchLog([
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Socket: /demo`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Event: join`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] ${joinMessage.zh_CN}`
+    ])
     // 广播用户进入的信息
     socket.broadcast.emit('join', joinMessage)
   }
@@ -48,12 +46,11 @@ export class DemoController {
       zh_CN: `[ ID: ${data.id}, 用户名：${data.username} ] 断开了连接`,
       en_US: `[ ID: ${data.id}, Username: ${data.username} ] has left`
     }
-    console.log('-----------------------------------------------------------')
-    console.log('Socket: /demo')
-    console.log('Event: leave')
-    console.log(leaveMessage.zh_CN)
-    console.log(getCurrentTime())
-    console.log('-----------------------------------------------------------')
+    batchLog([
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Socket: /demo`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] Event: leave`,
+      `[${GlobalAppConfig.APP_NAME} - ${getCurrentTime('HH:mm:ss')}] ${leaveMessage.zh_CN}`
+    ])
     // 广播用户离开的信息
     socket.broadcast.emit('leave', leaveMessage)
   }
