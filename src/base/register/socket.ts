@@ -39,12 +39,12 @@ const socketRegister = (httpServer: http.Server, httpsServer: https.Server, cont
 
     httpNamespace.on('connection', (socket: Socket) => {
       controller.events.forEach((event: any) => {
-        socket.on(event.event, (data: any) => event.handler(socket, data))
+        socket.on(event.event, (...data: any) => event.handler(socket, ...data))
       })
     })
     httpsNamespace.on('connection', (socket: Socket) => {
       controller.events.forEach((event: any) => {
-        socket.on(event.event, (data: any) => event.handler(socket, data))
+        socket.on(event.event, (...data: any) => event.handler(socket, ...data))
       })
     })
   })
