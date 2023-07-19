@@ -167,7 +167,7 @@ class UsersController {
   /**
    * 修改用户
    */
-  @Patch('/')
+  @Patch('/:id(\\d+)')
   async updateUser(request: Request, response: BaseResponse<OmitPassword<User>>) {
     const { t, currentUser } = request
     const userUpdateModel = request.body as UserUpdateModel
@@ -255,7 +255,7 @@ class UsersController {
   /**
    * 删除用户
    */
-  @Delete('/')
+  @Delete('/:id(\\d+)')
   async deleteUser(request: Request, response: BaseResponse) {
     const { t, currentUser } = request
     const id = parseInt(request.params.id, 10)
