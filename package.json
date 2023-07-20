@@ -11,7 +11,7 @@
     "prepare": "husky install",
     "cspell:check": "cspell **",
     "cspell:sort": "node ./scripts/cspell-sort.js",
-    "eslint:check": "eslint \"{src,scripts}/**/*.{ts,tsx,js,vue,md}\" --color",
+    "eslint:check": "eslint \"{src,scripts}/**/*.{ts,js,md}\" --color",
     "eslint:fix": "pnpm check:lint -- --fix",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --check --write --ignore-unknown .",
