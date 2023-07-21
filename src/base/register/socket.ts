@@ -1,5 +1,5 @@
 import type http from 'http'
-import type https from 'http'
+import type https from 'https'
 import type { Socket } from 'socket.io'
 import { Server } from 'socket.io'
 
