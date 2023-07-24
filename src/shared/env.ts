@@ -8,7 +8,11 @@ dotenv.config()
  * 获取环境变量
  * @description 字符串类型
  */
-export const getEnvStr = (key: string, defaultValue: string): string => process.env[String(key)] || defaultValue
+export const getEnvStr = (key: string, defaultValue: string): string =>
+  process.env[String(key)]?.replace(/\${(.*?)}/g, (_, placeholderValue) => {
+    const envKey = placeholderValue.trim()
+    return process.env[envKey] || ''
+  }) || defaultValue
 
 /**
  * 获取环境变量
