@@ -53,12 +53,12 @@ export const GlobalJWTConfig = Object.freeze({
  * 全局数据库配置
  */
 export const GlobalDBConfig = Object.freeze({
-  DB_USER: getEnvStr('DB_USER', 'mars-user'),
-  DB_PASSWORD: getEnvStr('DB_PASSWORD', 'est-password'),
-  DB_HOST: getEnvStr('DB_HOST', 'localhost'),
-  DB_PORT: getEnvNumber('DB_PORT', 5432),
-  DB_NAME: getEnvStr('DB_NAME', 'est-db'),
-  DB_URL: getEnvStr('DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/dolphin-admin')
+  PG_DB_USER: getEnvStr('PG_DB_USER', 'mars-user'),
+  PG_DB_PASSWORD: getEnvStr('PG_DB_PASSWORD', 'est-password'),
+  PG_DB_HOST: getEnvStr('PG_DB_HOST', 'localhost'),
+  PG_DB_PORT: getEnvNumber('PG_DB_PORT', 5432),
+  PG_DB_NAME: getEnvStr('PG_DB_NAME', 'est-db'),
+  PG_DB_URL: getEnvStr('PG_DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/dolphin-admin')
 })
 
 /**

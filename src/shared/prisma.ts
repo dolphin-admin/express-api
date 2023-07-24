@@ -1,17 +1,25 @@
 import { PrismaClient } from '@prisma/client'
 import util from 'util'
 
-import { GlobalConfig, GlobalDevConfig } from './config'
+import { GlobalConfig, GlobalDBConfig, GlobalDevConfig } from './config'
 
 interface CustomNodeJSGlobal extends Global {
-  prisma: PrismaClient
+  pgClient: PrismaClient
+  mongoClient: PrismaClient
 }
 
 declare const global: CustomNodeJSGlobal
 
+console.log(GlobalDBConfig.PG_DB_URL)
+
 export const prisma: PrismaClient =
-  global.prisma ||
+  global.pgClient ||
   new PrismaClient({
+    datasources: {
+      db: {
+        url: GlobalDBConfig.PG_DB_URL
+      }
+    },
     // eslint-disable-next-line no-nested-ternary
     log: GlobalConfig.IS_DEVELOPMENT
       ? GlobalDevConfig.DEV_SHOW_LOG
@@ -88,7 +96,7 @@ export const prisma: PrismaClient =
     })
 
 if (GlobalConfig.IS_DEVELOPMENT) {
-  global.prisma = prisma
+  global.pgClient = prisma
 }
 
 export const SEED_SUPER_ADMIN_USERNAME = 'SuperAdmin'
