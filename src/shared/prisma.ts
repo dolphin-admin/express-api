@@ -10,9 +10,7 @@ interface CustomNodeJSGlobal extends Global {
 
 declare const global: CustomNodeJSGlobal
 
-console.log(GlobalDBConfig.PG_DB_URL)
-
-export const prisma: PrismaClient =
+export const pgClient: PrismaClient =
   global.pgClient ||
   new PrismaClient({
     datasources: {
@@ -96,7 +94,7 @@ export const prisma: PrismaClient =
     })
 
 if (GlobalConfig.IS_DEVELOPMENT) {
-  global.pgClient = prisma
+  global.pgClient = pgClient
 }
 
 export const SEED_SUPER_ADMIN_USERNAME = 'SuperAdmin'

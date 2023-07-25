@@ -7,12 +7,13 @@ dotenv.config()
 /**
  * 获取环境变量
  * @description 字符串类型
+ * 如果环境变量中包含 ${}，则会替换为对应的环境变量值
  */
 export const getEnvStr = (key: string, defaultValue: string): string =>
-  process.env[String(key)]?.replace(/\${(.*?)}/g, (_, placeholderValue) => {
-    const envKey = placeholderValue.trim()
-    return process.env[envKey] || ''
-  }) || defaultValue
+  process.env[String(key)]?.replace(
+    /\${(.*?)}/g,
+    (_, placeholderValue) => process.env[placeholderValue.trim()] || ''
+  ) || defaultValue
 
 /**
  * 获取环境变量
