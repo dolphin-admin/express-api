@@ -61,7 +61,7 @@ pnpm i
 ### 数据库迁移
 
 ```bash
-pnpm prisma:migrate:pg
+pnpm prisma:migrate:dev
 pnpm prisma:migrate:mongo
 pnpm prisma:generate
 ```
