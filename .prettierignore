@@ -1,3 +1,5 @@
 node_modules
 /storage
+/src/prisma/generated
+/src/prisma/migrations
 pnpm-lock.yaml

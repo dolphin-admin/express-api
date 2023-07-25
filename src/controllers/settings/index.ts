@@ -1,7 +1,7 @@
-import type { Setting } from '@prisma/client'
 import { Request } from 'express'
 
 import { Auth, Controller, Delete, Get, Post, Put } from '@/decorators'
+import type { Setting } from '@/prisma/generated/pg'
 import { SettingsService } from '@/services'
 import type { PageRequestModel } from '@/types'
 import { BaseResponse } from '@/types'

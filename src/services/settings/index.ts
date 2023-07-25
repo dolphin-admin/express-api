@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import type { SettingsInputModel } from '@/models'
+import { Prisma } from '@/prisma/generated/pg'
 import { generateUUID, pgClient } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 

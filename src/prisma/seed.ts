@@ -1,8 +1,8 @@
 import { randAvatar } from '@ngneat/falso'
 import { hash } from '@node-rs/bcrypt'
-import type { Prisma, Role, User } from '@prisma/client'
-import { PrismaClient } from '@prisma/client'
 
+import type { Prisma, Role, User } from '@/prisma/generated/pg'
+import { PrismaClient } from '@/prisma/generated/pg'
 import {
   errorLog,
   getCurrentTime,

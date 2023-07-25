@@ -34,3 +34,6 @@ coverage
 
 # Storage dir is where the upload files are stored.
 /storage
+
+# Prisma generated files
+/src/prisma/generated

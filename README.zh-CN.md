@@ -2,7 +2,7 @@
 
 [English](./README.md) / 简体中文
 
-Dolphin Admin Server 是 Dolphin Admin Web 的后端服务，基于 Express + TypeScript + Prisma + PostgresSQL，通过
+Dolphin Admin Server 是 Dolphin Admin Web 的后端服务，基于 Express + TypeScript + Prisma + PostgresSQL + MongoDB，通过
 [EST](https://github.com/recallwei/est) 模板构建。
 
 ## 特性
@@ -10,6 +10,8 @@ Dolphin Admin Server 是 Dolphin Admin Web 的后端服务，基于 Express + Ty
 - [x] 基于 [Express](https://expressjs.com/) 构建 Web 服务
 - [x] [TypeScript](https://www.typescriptlang.org/)，当然
 - [x] [Prisma](https://www.prisma.io/) 作为 ORM
+- [x] [PostgreSQL](https://www.postgresql.org/) 作为关系型数据库
+- [x] [MongoDB](https://www.mongodb.com/) 作为非关系型数据库
 - [x] 基于装饰器构建路由、中间件、异常处理等
 - [x] JWT 认证和基于角色的授权
 - [x] 使用 [multer](https://github.com/expressjs/multer) 构建文件服务
@@ -31,6 +33,7 @@ Dolphin Admin Server 是 Dolphin Admin Web 的后端服务，基于 Express + Ty
 - [TypeScript](https://www.typescriptlang.org/)
 - [Prisma](https://www.prisma.io/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [MongoDB](https://www.mongodb.com/)
 
 ## 代码规范
 
@@ -58,7 +61,8 @@ pnpm i
 ### 数据库迁移
 
 ```bash
-pnpm prisma:migrate
+pnpm prisma:migrate:pg
+pnpm prisma:migrate:mongo
 pnpm prisma:generate
 ```
 

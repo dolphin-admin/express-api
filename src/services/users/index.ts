@@ -1,5 +1,3 @@
-import type { Prisma, User } from '@prisma/client'
-
 import type {
   PageUsersModel,
   UserExistModel,
@@ -8,6 +6,7 @@ import type {
   UserUpdateModel
 } from '@/models'
 import { genderLabelKeyMap } from '@/models'
+import type { Prisma, User } from '@/prisma/generated/pg'
 import { AuthType, pgClient } from '@/shared'
 import type { ServiceOptions } from '@/types'
 
@@ -139,7 +138,8 @@ class UsersService {
         }
       }),
       total,
-      ...pageModel
+      page,
+      pageSize
     }
   }
 

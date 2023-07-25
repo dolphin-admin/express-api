@@ -10,6 +10,8 @@ built with [EST](https://github.com/recallwei/est).
 - [x] Build Web service based on [Express](https://expressjs.com/)
 - [x] [TypeScript](https://www.typescriptlang.org/), of course
 - [x] [Prisma](https://www.prisma.io/) as ORM
+- [x] [PostgreSQL](https://www.postgresql.org/) as relational database
+- [x] [MongoDB](https://www.mongodb.com/) as non-relational database
 - [x] Build routes, middleware, exception handling, etc. based on decorators
 - [x] JWT authentication and role-based authorization
 - [x] Build file service based on [multer](https://github.com/expressjs/multer)
@@ -31,6 +33,7 @@ built with [EST](https://github.com/recallwei/est).
 - [TypeScript](https://www.typescriptlang.org/)
 - [Prisma](https://www.prisma.io/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [MongoDB](https://www.mongodb.com/)
 
 ## Code Style
 
@@ -58,7 +61,8 @@ pnpm i
 ### Database Migration
 
 ```bash
-pnpm run migrate:dev
+pnpm prisma:migrate:pg
+pnpm prisma:migrate:mongo
 pnpm prisma:generate
 ```
 

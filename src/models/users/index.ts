@@ -1,5 +1,4 @@
-import type { User } from '@prisma/client'
-
+import type { User } from '@/prisma/generated/pg'
 import type { BaseResponse, PageRequestModel, PageResponseModel } from '@/types'
 
 export interface UserPageRequestModel extends PageRequestModel {

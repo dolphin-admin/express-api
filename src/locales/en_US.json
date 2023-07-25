@@ -123,6 +123,10 @@
     },
     "FetchUserData": {
       "Failed": "Error fetching Google user data."
+    },
+    "UserTraffic": {
+      "Created": "User traffic record created.",
+      "CreateFailed": "User traffic record create failed."
     }
   }
 }

@@ -1,18 +1,20 @@
-import { PrismaClient } from '@prisma/client'
 import util from 'util'
+
+import { PrismaClient as MongoPrismaClient } from '@/prisma/generated/mongo'
+import { PrismaClient as PGPrismaClient } from '@/prisma/generated/pg'
 
 import { GlobalConfig, GlobalDBConfig, GlobalDevConfig } from './config'
 
 interface CustomNodeJSGlobal extends Global {
-  pgClient: PrismaClient
-  mongoClient: PrismaClient
+  pgClient: PGPrismaClient
+  mongoClient: MongoPrismaClient
 }
 
 declare const global: CustomNodeJSGlobal
 
-export const pgClient: PrismaClient =
+export const pgClient: PGPrismaClient =
   global.pgClient ||
-  new PrismaClient({
+  new PGPrismaClient({
     datasources: {
       db: {
         url: GlobalDBConfig.PG_DB_URL
@@ -93,8 +95,91 @@ export const pgClient: PrismaClient =
       }
     })
 
+export const mongoClient: MongoPrismaClient =
+  global.mongoClient ||
+  new MongoPrismaClient({
+    datasources: {
+      db: {
+        url: GlobalDBConfig.MONGO_DB_URL
+      }
+    },
+    // eslint-disable-next-line no-nested-ternary
+    log: GlobalConfig.IS_DEVELOPMENT
+      ? GlobalDevConfig.DEV_SHOW_LOG
+        ? ['warn', 'error']
+        : []
+      : ['query', 'info', 'warn', 'error'],
+    errorFormat: 'pretty'
+  }) // 日志
+    .$extends({
+      query: {
+        async $allOperations({ operation, model, args, query }) {
+          const start = performance.now()
+          const result = await query(args)
+          const end = performance.now()
+          const time = end - start
+          if (GlobalDevConfig.DEV_SHOW_LOG) {
+            console.log(
+              util.inspect(
+                {
+                  model,
+                  operation,
+                  args,
+                  time
+                },
+                {
+                  showHidden: false,
+                  depth: null,
+                  colors: true
+                }
+              )
+            )
+            console.log(result)
+          }
+          return result
+        },
+        $allModels: {
+          // 过滤软删除
+          async findFirst({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findMany({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findFirstOrThrow({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findUnique({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async findUniqueOrThrow({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          async count({ args, query }) {
+            args.where = { deletedAt: null, ...args.where }
+            return query(args)
+          },
+          // 自动更新修改时间
+          async update({ args, query }) {
+            args.data.updatedAt = new Date().toISOString()
+            return query(args)
+          },
+          async updateMany({ args, query }) {
+            args.data.updatedAt = new Date().toISOString()
+            return query(args)
+          }
+        }
+      }
+    })
+
 if (GlobalConfig.IS_DEVELOPMENT) {
   global.pgClient = pgClient
+  global.mongoClient = mongoClient
 }
 
 export const SEED_SUPER_ADMIN_USERNAME = 'SuperAdmin'

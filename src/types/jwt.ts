@@ -1,3 +1,3 @@
-import type { User } from '@prisma/client'
+import type { User } from '@/prisma/generated/pg'
 
 export type JWTModel = Pick<User, 'id' | 'username'>

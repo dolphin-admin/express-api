@@ -124,5 +124,9 @@
     "FetchUserData": {
       "Failed": "获取 Google 用户信息失败"
     }
+  },
+  "UserTraffic": {
+    "Created": "用户流量记录创建成功",
+    "CreateFailed": "用户流量记录创建失败"
   }
 }
