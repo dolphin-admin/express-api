@@ -1,3 +1,4 @@
+export * from './autoMapper'
 export * from './config'
 export * from './enum'
 export * from './env'

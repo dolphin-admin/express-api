@@ -1,4 +1,4 @@
-import type { UserTraffic } from '@prisma/pg'
+import type { UserTraffic, UserTrafficRecord } from '@prisma/pg'
 
 import type { PageResponseModel } from '@/types'
 
@@ -8,7 +8,6 @@ export type PageUserTrafficsModel = {
 
 export type UserTrafficCreateInputModel = Pick<
   UserTraffic,
-  | 'userId'
   | 'app'
   | 'version'
   | 'env'
@@ -22,4 +21,6 @@ export type UserTrafficCreateInputModel = Pick<
   | 'enterAt'
   | 'leaveAt'
   | 'duration'
->
+> & {
+  records: Pick<UserTrafficRecord, 'title' | 'url' | 'path' | 'enterAt' | 'leaveAt' | 'duration'>[]
+}

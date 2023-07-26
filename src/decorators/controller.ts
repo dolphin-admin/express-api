@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 
 import { validateToken } from '@/middlewares'
-import { baseUpload } from '@/shared'
+import { baseUpload } from '@/utils'
 
 type IMiddleware = (req: Request, res: Response, next: NextFunction) => void
 

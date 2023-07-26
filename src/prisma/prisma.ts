@@ -2,7 +2,7 @@ import { PrismaClient as MongoPrismaClient } from '@prisma/mongo'
 import { PrismaClient as PGPrismaClient } from '@prisma/pg'
 import util from 'util'
 
-import { GlobalConfig, GlobalDBConfig, GlobalDevConfig } from '@/shared'
+import { GlobalConfig, GlobalDBConfig, GlobalDevConfig } from '@/utils'
 
 interface CustomNodeJSGlobal extends Global {
   pgClient: PGPrismaClient

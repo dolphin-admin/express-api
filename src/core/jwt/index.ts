@@ -1,7 +1,7 @@
 import { sign, verify } from 'jsonwebtoken'
 
-import { GlobalJWTConfig } from '@/shared'
 import type { JWTModel } from '@/types'
+import { GlobalJWTConfig } from '@/utils'
 
 class JWTManager {
   generateAccessToken(user: JWTModel): string | null {

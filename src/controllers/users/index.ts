@@ -14,8 +14,8 @@ import type {
 } from '@/models'
 import { UserCreateResponse } from '@/models'
 import { UsersService } from '@/services'
-import { passwordEquals, passwordHash } from '@/shared'
 import { BasePageResponse, BaseResponse } from '@/types'
+import { passwordEquals, passwordHash } from '@/utils'
 
 @Controller('/users')
 @Auth()

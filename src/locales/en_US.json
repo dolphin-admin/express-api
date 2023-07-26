@@ -1,4 +1,12 @@
 {
+  "Common": {
+    "Created": "Created.",
+    "CreateFailed": "Create failed.",
+    "Updated": "Updated.",
+    "UpdateFailed": "Update failed.",
+    "Deleted": "Deleted.",
+    "DeleteFailed": "Delete failed."
+  },
   "Welcome": "Welcome to Dolphin Admin!",
   "Router": {
     "NotExist": "API or assets Not Exist."
@@ -86,7 +94,9 @@
   "Token": {
     "Generate": {
       "Failed": "Error generating token."
-    }
+    },
+    "NotFound": "Authorize failed, token not found.",
+    "Invalid": "Authorize failed, token is invalid."
   },
   "Login": {
     "Success": "Login success."

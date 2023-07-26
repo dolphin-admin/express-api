@@ -8,17 +8,18 @@ import type { BaseResponse } from '@/types'
  * 验证 token 中间件
  */
 export const validateToken = async (request: Request, response: BaseResponse, next: NextFunction) => {
+  const { t } = request
   const { authorization } = request.headers
 
   if (!authorization) {
-    response.status(401).json({ message: 'Token not found!' })
+    response.status(401).json({ message: t('Token.NotFound') })
     return
   }
 
   // 验证 token 是否有效
   const verifiedResult = JWTManager.validateAccessToken(authorization)
   if (!verifiedResult) {
-    response.status(401).json({ message: 'Invalid token!' })
+    response.status(401).json({ message: t('Token.Invalid') })
     return
   }
 
@@ -28,6 +29,10 @@ export const validateToken = async (request: Request, response: BaseResponse, ne
   if (user) {
     // 将当前用户信息挂载到 request 对象上，便于后续接口路由使用
     request.currentUser = user
+  } else {
+    // 未找到用户信息，返回 401
+    response.status(401).json({ message: t('Token.Invalid') })
+    return
   }
 
   next()

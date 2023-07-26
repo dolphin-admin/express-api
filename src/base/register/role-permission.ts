@@ -1,7 +1,7 @@
 import type { BuiltInPermission, BuiltInRole } from '@/core'
 import { builtInRolePermissions, getAllBuiltInPermissions, getAllBuiltInRoles } from '@/core'
 import { pgClient, SEED_SUPER_ADMIN_ROLE_KEY, SEED_SUPER_ADMIN_USERNAME } from '@/prisma'
-import { errorLog, getCurrentTime, primaryLog } from '@/shared'
+import { errorLog, getCurrentTime, primaryLog } from '@/utils'
 
 const rolePermissionRegister = async () => {
   try {

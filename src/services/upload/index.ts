@@ -1,4 +1,4 @@
-import { batchLog, GlobalAppConfig, LOG_PREFIX } from '@/shared'
+import { batchLog, GlobalAppConfig, LOG_PREFIX } from '@/utils'
 
 class UploadService {
   logFileInfo(file: Express.Multer.File) {

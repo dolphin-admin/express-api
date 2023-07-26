@@ -8,8 +8,8 @@ import type { UserLoginInputModel, UserSignupInputModel } from '@/models'
 import { UserLoginResponse, UserSignupResponse } from '@/models'
 import { pgClient, SEED_SUPER_ADMIN_PASSWORD } from '@/prisma'
 import { AuthService, UsersService } from '@/services'
-import { AuthType, generateRandomString, GlobalAuthConfig, passwordEquals, passwordHash } from '@/shared'
 import type { JWTModel } from '@/types'
+import { AuthType, generateRandomString, GlobalAuthConfig, passwordEquals, passwordHash } from '@/utils'
 
 @Controller('/auth')
 class AuthController {

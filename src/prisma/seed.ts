@@ -2,7 +2,7 @@ import { randAvatar } from '@ngneat/falso'
 import { hash } from '@node-rs/bcrypt'
 import type { Prisma, Role, User } from '@prisma/pg'
 
-import { errorLog, getCurrentTime, primaryLog } from '@/shared'
+import { errorLog, getCurrentTime, primaryLog } from '@/utils'
 
 import {
   pgClient,
