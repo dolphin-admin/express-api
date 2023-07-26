@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import type { User } from '@prisma/pg'
 
 import type { BaseResponse, PageRequestModel, PageResponseModel } from '@/types'
 
@@ -80,6 +80,6 @@ export enum Gender {
 type GenderLabelKey = 'Gender.Male' | 'Gender.Female'
 
 export const genderLabelKeyMap = new Map<number, GenderLabelKey>([
-  [0, 'Gender.Male'],
-  [1, 'Gender.Female']
+  [0, 'Gender.Female'],
+  [1, 'Gender.Male']
 ])

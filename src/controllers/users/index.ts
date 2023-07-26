@@ -1,5 +1,5 @@
-import type { User } from '@prisma/client'
-import { Prisma } from '@prisma/client'
+import type { User } from '@prisma/pg'
+import { Prisma } from '@prisma/pg'
 import { Request } from 'express'
 
 import { Auth, Controller, Delete, Get, Patch, Post } from '@/decorators'

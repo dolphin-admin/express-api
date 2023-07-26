@@ -1,12 +1,11 @@
 import { randAvatar } from '@ngneat/falso'
 import { hash } from '@node-rs/bcrypt'
-import type { Prisma, Role, User } from '@prisma/client'
-import { PrismaClient } from '@prisma/client'
+import type { Prisma, Role, User } from '@prisma/pg'
+
+import { errorLog, getCurrentTime, primaryLog } from '@/shared'
 
 import {
-  errorLog,
-  getCurrentTime,
-  primaryLog,
+  pgClient,
   SEED_ENTER_SYSTEM_PERMISSION_KEY,
   SEED_ENTER_SYSTEM_PERMISSION_NAME_EN,
   SEED_ENTER_SYSTEM_PERMISSION_NAME_ZH,
@@ -15,9 +14,7 @@ import {
   SEED_SUPER_ADMIN_ROLE_NAME_EN,
   SEED_SUPER_ADMIN_ROLE_NAME_ZH,
   SEED_SUPER_ADMIN_USERNAME
-} from '@/shared'
-
-const prisma = new PrismaClient()
+} from './prisma'
 
 const seed = async () => {
   const defaultUser: Prisma.UserCreateInput = {
@@ -28,7 +25,7 @@ const seed = async () => {
     enabled: true
   }
 
-  const existingSuperAdminUser = await prisma.user.findUnique({
+  const existingSuperAdminUser = await pgClient.user.findUnique({
     where: { username: SEED_SUPER_ADMIN_USERNAME }
   })
 
@@ -36,7 +33,7 @@ const seed = async () => {
   let superAdminRole: Role
 
   if (!existingSuperAdminUser) {
-    superAdminUser = await prisma.user.create({
+    superAdminUser = await pgClient.user.create({
       data: {
         ...defaultUser
       }
@@ -49,12 +46,12 @@ const seed = async () => {
     )
   }
 
-  const existingEnterSystemPermission = await prisma.permission.findFirst({
+  const existingEnterSystemPermission = await pgClient.permission.findFirst({
     where: { key: SEED_ENTER_SYSTEM_PERMISSION_KEY }
   })
 
   if (!existingEnterSystemPermission) {
-    await prisma.permission.create({
+    await pgClient.permission.create({
       data: {
         key: SEED_ENTER_SYSTEM_PERMISSION_KEY,
         nameEn: SEED_ENTER_SYSTEM_PERMISSION_NAME_EN,
@@ -75,14 +72,14 @@ const seed = async () => {
     )
   }
 
-  const allPermissions = await prisma.permission.findMany()
+  const allPermissions = await pgClient.permission.findMany()
 
-  const existingSuperAdminRole = await prisma.role.findUnique({
+  const existingSuperAdminRole = await pgClient.role.findUnique({
     where: { key: SEED_SUPER_ADMIN_ROLE_KEY }
   })
 
   if (!existingSuperAdminRole) {
-    superAdminRole = await prisma.role.create({
+    superAdminRole = await pgClient.role.create({
       data: {
         key: SEED_SUPER_ADMIN_ROLE_KEY,
         nameEn: SEED_SUPER_ADMIN_ROLE_NAME_EN,
@@ -100,7 +97,7 @@ const seed = async () => {
     )
   }
 
-  const existingSuperAdminUserRole = await prisma.userRole.findFirst({
+  const existingSuperAdminUserRole = await pgClient.userRole.findFirst({
     where: {
       userId: superAdminUser.id,
       roleId: superAdminRole.id
@@ -108,7 +105,7 @@ const seed = async () => {
   })
 
   if (!existingSuperAdminUserRole) {
-    await prisma.userRole.create({
+    await pgClient.userRole.create({
       data: {
         user: { connect: { id: superAdminUser.id } },
         role: { connect: { id: superAdminRole.id } },
@@ -131,7 +128,7 @@ const seed = async () => {
   try {
     await Promise.all(
       allPermissions.map(async (permissionToConnect) => {
-        const existingRolePermission = await prisma.rolePermission.findFirst({
+        const existingRolePermission = await pgClient.rolePermission.findFirst({
           where: {
             roleId: superAdminRole.id,
             permissionId: permissionToConnect.id
@@ -139,7 +136,7 @@ const seed = async () => {
         })
 
         if (!existingRolePermission) {
-          await prisma.rolePermission.create({
+          await pgClient.rolePermission.create({
             data: {
               role: { connect: { id: superAdminRole.id } },
               permission: { connect: { id: permissionToConnect.id } },
@@ -174,9 +171,9 @@ seed()
   .catch(async (e) => {
     errorLog(`[prisma - ${getCurrentTime('HH:mm:ss')}] 🐞 Error occurred when seed your db!`)
     console.error(e)
-    await prisma.$disconnect()
+    await pgClient.$disconnect()
     process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect()
+    await pgClient.$disconnect()
   })

@@ -1,7 +1,8 @@
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/pg'
 
 import type { SettingsInputModel } from '@/models'
-import { generateUUID, prisma } from '@/shared'
+import { pgClient } from '@/prisma'
+import { generateUUID } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
 class SettingsService {
@@ -11,12 +12,12 @@ class SettingsService {
   async getSettings(pageModel: PageRequestModel) {
     const { page, pageSize } = pageModel
 
-    const settings = await prisma.setting.findMany({
+    const settings = await pgClient.setting.findMany({
       skip: (page - 1) * pageSize,
       take: pageSize
     })
 
-    const total = await prisma.setting.count()
+    const total = await pgClient.setting.count()
 
     return {
       settings,
@@ -29,7 +30,7 @@ class SettingsService {
    * 获取指定配置项
    */
   async getSettingByKey(key: string) {
-    return prisma.setting.findFirst({
+    return pgClient.setting.findFirst({
       where: {
         key
       }
@@ -40,7 +41,7 @@ class SettingsService {
    * 批量获取指定配置项
    */
   async getSettingsByKeys(keys: string[]) {
-    return prisma.setting.findMany({
+    return pgClient.setting.findMany({
       where: {
         key: {
           in: keys
@@ -54,7 +55,7 @@ class SettingsService {
    */
   async createSetting(setting: SettingsInputModel, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return prisma.setting.create({
+    return pgClient.setting.create({
       data: {
         ...setting,
         enabled: true,
@@ -69,7 +70,7 @@ class SettingsService {
    */
   async createSettings(settings: SettingsInputModel[], options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return prisma.setting.createMany({
+    return pgClient.setting.createMany({
       data: settings.map((setting) => ({
         ...setting,
         uuid: generateUUID(),
@@ -86,7 +87,7 @@ class SettingsService {
   async updateSettingByKey(setting: SettingsInputModel, options?: ServiceOptions) {
     const { key, value, description } = setting
     const { currentUser } = options || {}
-    return prisma.setting.update({
+    return pgClient.setting.update({
       where: {
         key
       },
@@ -103,7 +104,7 @@ class SettingsService {
    */
   async deleteSettingByKey(key: string, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return prisma.setting.update({
+    return pgClient.setting.update({
       where: {
         key
       },
@@ -120,7 +121,7 @@ class SettingsService {
    */
   async enableSettingByKey(key: string, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return prisma.setting.update({
+    return pgClient.setting.update({
       where: {
         key
       },
@@ -136,7 +137,7 @@ class SettingsService {
    */
   async banSettingByKey(key: string, options?: ServiceOptions) {
     const { currentUser } = options || {}
-    return prisma.setting.update({
+    return pgClient.setting.update({
       where: {
         key
       },

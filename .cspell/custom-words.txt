@@ -2,6 +2,7 @@ auths
 autoincrement
 commitlint
 datasource
+datasources
 degit
 falso
 middlewares

@@ -6,7 +6,9 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@prisma/pg": ["src/prisma/generated/pg"],
+      "@prisma/mongo": ["src/prisma/generated/mongo"]
     },
     "sourceMap": true,
     "outDir": "dist",

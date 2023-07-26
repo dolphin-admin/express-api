@@ -1,4 +1,4 @@
-import type { Prisma, User } from '@prisma/client'
+import type { Prisma, User } from '@prisma/pg'
 
 import type {
   PageUsersModel,
@@ -8,7 +8,8 @@ import type {
   UserUpdateModel
 } from '@/models'
 import { genderLabelKeyMap } from '@/models'
-import { AuthType, prisma } from '@/shared'
+import { pgClient } from '@/prisma'
+import { AuthType } from '@/shared'
 import type { ServiceOptions } from '@/types'
 
 class UsersService {
@@ -95,7 +96,7 @@ class UsersService {
       [field]: orderFields[index]
     }))
 
-    const users = await prisma.user.findMany({
+    const users = await pgClient.user.findMany({
       where,
       orderBy,
       skip: (page - 1) * pageSize,
@@ -114,7 +115,7 @@ class UsersService {
       }
     })
 
-    const total = await prisma.user.count({
+    const total = await pgClient.user.count({
       where
     })
 
@@ -139,7 +140,8 @@ class UsersService {
         }
       }),
       total,
-      ...pageModel
+      page,
+      pageSize
     }
   }
 
@@ -147,7 +149,7 @@ class UsersService {
    * 获取用户详情
    */
   async getUserById(id: number): Promise<User | null> {
-    return prisma.user.findFirst({
+    return pgClient.user.findFirst({
       where: {
         id
       }
@@ -159,7 +161,7 @@ class UsersService {
    */
   async createUser(user: UserInputBaseModel, options?: ServiceOptions): Promise<User> {
     const { currentUser } = options || {}
-    return prisma.user.create({
+    return pgClient.user.create({
       data: {
         ...user,
         verified: true,
@@ -176,7 +178,7 @@ class UsersService {
     const { currentUser } = options || {}
     const { birthDate } = user
 
-    return prisma.user.update({
+    return pgClient.user.update({
       where: {
         id
       },
@@ -193,7 +195,7 @@ class UsersService {
    */
   async deleteUser(id: number, options?: ServiceOptions): Promise<User | null> {
     const { currentUser } = options || {}
-    return prisma.user.update({
+    return pgClient.user.update({
       where: {
         id
       },
@@ -209,7 +211,7 @@ class UsersService {
    * 用户是否存在
    */
   async alreadyExists(username: string): Promise<UserExistModel> {
-    const user = await prisma.user.findFirst({
+    const user = await pgClient.user.findFirst({
       where: {
         username
       }
@@ -222,7 +224,7 @@ class UsersService {
    */
   async verifyUser(id: number, options?: ServiceOptions): Promise<User | null> {
     const { currentUser } = options || {}
-    return prisma.user.update({
+    return pgClient.user.update({
       where: {
         id
       },
@@ -238,7 +240,7 @@ class UsersService {
    */
   async activateUser(id: number, options?: ServiceOptions): Promise<User | null> {
     const { currentUser } = options || {}
-    return prisma.user.update({
+    return pgClient.user.update({
       where: {
         id
       },
@@ -254,7 +256,7 @@ class UsersService {
    */
   async deactivateUser(id: number, options?: ServiceOptions): Promise<User | null> {
     const { currentUser } = options || {}
-    return prisma.user.update({
+    return pgClient.user.update({
       where: {
         id
       },

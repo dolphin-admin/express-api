@@ -1,34 +1,28 @@
 import type { BuiltInPermission, BuiltInRole } from '@/core'
 import { builtInRolePermissions, getAllBuiltInPermissions, getAllBuiltInRoles } from '@/core'
-import {
-  errorLog,
-  getCurrentTime,
-  primaryLog,
-  prisma,
-  SEED_SUPER_ADMIN_ROLE_KEY,
-  SEED_SUPER_ADMIN_USERNAME
-} from '@/shared'
+import { pgClient, SEED_SUPER_ADMIN_ROLE_KEY, SEED_SUPER_ADMIN_USERNAME } from '@/prisma'
+import { errorLog, getCurrentTime, primaryLog } from '@/shared'
 
 const rolePermissionRegister = async () => {
   try {
-    const superAdminUser = await prisma.user.findUnique({
+    const superAdminUser = await pgClient.user.findUnique({
       where: {
         username: SEED_SUPER_ADMIN_USERNAME
       }
     })
 
-    const superAdminRole = await prisma.role.findUnique({
+    const superAdminRole = await pgClient.role.findUnique({
       where: {
         key: SEED_SUPER_ADMIN_ROLE_KEY
       }
     })
 
-    const allPermissions = await prisma.permission.findMany()
+    const allPermissions = await pgClient.permission.findMany()
 
     if (superAdminRole) {
       await Promise.all(
         allPermissions.map(async (permission) => {
-          const existingRolePermission = await prisma.rolePermission.findFirst({
+          const existingRolePermission = await pgClient.rolePermission.findFirst({
             where: {
               roleId: superAdminRole.id,
               permissionId: permission.id
@@ -36,7 +30,7 @@ const rolePermissionRegister = async () => {
           })
 
           if (!existingRolePermission) {
-            await prisma.rolePermission.create({
+            await pgClient.rolePermission.create({
               data: {
                 role: { connect: { id: superAdminRole.id } },
                 permission: { connect: { id: permission.id } }
@@ -58,14 +52,14 @@ const rolePermissionRegister = async () => {
 
     await Promise.all(
       builtInRoleItems.map(async (builtInRoleItem) => {
-        const existingRole = await prisma.role.findUnique({
+        const existingRole = await pgClient.role.findUnique({
           where: {
             key: builtInRoleItem.key
           }
         })
 
         if (!existingRole) {
-          await prisma.role.create({
+          await pgClient.role.create({
             data: {
               key: builtInRoleItem.key,
               nameEn: builtInRoleItem.nameEn,
@@ -83,14 +77,14 @@ const rolePermissionRegister = async () => {
 
     await Promise.all(
       builtInPermissionItems.map(async (builtInPermissionItem) => {
-        const existingPermission = await prisma.permission.findUnique({
+        const existingPermission = await pgClient.permission.findUnique({
           where: {
             key: builtInPermissionItem.key
           }
         })
 
         if (!existingPermission) {
-          await prisma.permission.create({
+          await pgClient.permission.create({
             data: {
               key: builtInPermissionItem.key,
               nameEn: builtInPermissionItem.nameEn,
@@ -110,7 +104,7 @@ const rolePermissionRegister = async () => {
       builtInRoleKeys.map(async (builtInRoleKey) => {
         const builtInPermissions = builtInRolePermissions[builtInRoleKey] as BuiltInPermission[]
 
-        const currentRole = await prisma.role.findUnique({
+        const currentRole = await pgClient.role.findUnique({
           where: {
             key: builtInRoleKey
           }
@@ -118,13 +112,13 @@ const rolePermissionRegister = async () => {
 
         await Promise.all(
           builtInPermissions.map(async (builtInPermissionKey) => {
-            const currentPermission = await prisma.permission.findUnique({
+            const currentPermission = await pgClient.permission.findUnique({
               where: {
                 key: builtInPermissionKey
               }
             })
 
-            const existingRolePermission = await prisma.rolePermission.findFirst({
+            const existingRolePermission = await pgClient.rolePermission.findFirst({
               where: {
                 roleId: currentRole!.id,
                 permissionId: currentPermission!.id
@@ -132,7 +126,7 @@ const rolePermissionRegister = async () => {
             })
 
             if (!existingRolePermission) {
-              await prisma.rolePermission.create({
+              await pgClient.rolePermission.create({
                 data: {
                   role: { connect: { id: currentRole!.id } },
                   permission: { connect: { id: currentPermission!.id } },

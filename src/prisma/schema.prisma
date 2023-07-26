@@ -1,11 +1,12 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DB_URL")
+  url      = env("PG_DB_URL")
 }
 
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
+  output        = "./generated/pg"
 }
 
 model User {
@@ -29,9 +30,9 @@ model User {
   verified    Boolean   @default(false)
   enabled     Boolean   @default(true)
 
-  auths Auth[]
-
-  userRoles UserRole[]
+  auths        Auth[] /// 用户授权
+  userRoles    UserRole[] /// 用户角色
+  userTraffics UserTraffic[] /// 用户访问记录
 
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
   createdBy Int?      @map("created_by")
@@ -192,4 +193,59 @@ model MenuItem {
   deletedBy Int?      @map("deleted_by")
 
   @@map("system_menu_item")
+}
+
+/// 用户流量记录
+model UserTraffic {
+  id        Int       @id @default(autoincrement()) /// 唯一 ID
+  app       String?   @db.VarChar(50) /// 应用名称
+  version   String?   @db.VarChar(50) /// 应用版本
+  env       String?   @db.VarChar(50) /// 应用环境
+  source    String?   @db.VarChar(50) /// 访问来源（例如：GitHub、Google）
+  userAgent String?   @map("user_agent") @db.VarChar(1000) /// 用户代理
+  ip        String?   @db.VarChar(50) /// 用户 IP
+  area      String?   @db.VarChar(255) /// 用户地区
+  longitude Float? /// 经度
+  latitude  Float? /// 纬度
+  altitude  Float? /// 海拔
+  enterAt   DateTime? @map("enter_at") @db.Timestamptz(3) /// 进入时间
+  leaveAt   DateTime? @map("leave_at") @db.Timestamptz(3) /// 离开时间
+  duration  Int? /// 访问时长（毫秒）
+
+  user   User @relation(fields: [userId], references: [id]) /// 用户
+  userId Int  @map("user_id") /// 用户 ID
+
+  trafficRecords TrafficRecord[] /// 访问记录
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
+  createdBy Int?      @map("created_by") // 创建人
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
+  updatedBy Int?      @map("updated_by") // 更新人
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
+  deletedBy Int?      @map("deleted_by") // 删除人
+
+  @@map("user_traffic")
+}
+
+/// 访问记录（访问路由的记录）
+model TrafficRecord {
+  id       Int       @id @default(autoincrement()) /// 唯一 ID
+  title    String?   @db.VarChar(255) /// 路由标题
+  url      String?   @db.VarChar(1000) /// 路由 URL
+  path     String?   @db.VarChar(1000) /// 路由路径
+  enterAt  DateTime? @map("enter_at") @db.Timestamptz(3) /// 进入时间
+  leaveAt  DateTime? @map("leave_at") @db.Timestamptz(3) /// 离开时间
+  duration Int? /// 停留时长（毫秒）
+
+  userTraffic   UserTraffic @relation(fields: [userTrafficId], references: [id])
+  userTrafficId Int         @map("user_traffic_id") /// 用户流量记录 ID
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
+  createdBy Int?      @map("created_by") // 创建人
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3) // 更新时间
+  updatedBy Int?      @map("updated_by") // 更新人
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
+  deletedBy Int?      @map("deleted_by") // 删除人
+
+  @@map("traffic_record")
 }

@@ -1,4 +1,4 @@
-import type { Setting } from '@prisma/client'
+import type { Setting } from '@prisma/pg'
 import { Request } from 'express'
 
 import { Auth, Controller, Delete, Get, Post, Put } from '@/decorators'

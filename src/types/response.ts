@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import type { User } from '@prisma/pg'
 import type { Response } from 'express'
 
 import type { Lang, MessageSchema } from './i18n'

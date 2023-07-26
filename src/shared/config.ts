@@ -53,12 +53,20 @@ export const GlobalJWTConfig = Object.freeze({
  * 全局数据库配置
  */
 export const GlobalDBConfig = Object.freeze({
-  DB_USER: getEnvStr('DB_USER', 'mars-user'),
-  DB_PASSWORD: getEnvStr('DB_PASSWORD', 'est-password'),
-  DB_HOST: getEnvStr('DB_HOST', 'localhost'),
-  DB_PORT: getEnvNumber('DB_PORT', 5432),
-  DB_NAME: getEnvStr('DB_NAME', 'est-db'),
-  DB_URL: getEnvStr('DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/dolphin-admin')
+  // PostgreSQL 配置
+  PG_DB_USER: getEnvStr('PG_DB_USER', 'mars-user'),
+  PG_DB_PASSWORD: getEnvStr('PG_DB_PASSWORD', 'mars-password'),
+  PG_DB_HOST: getEnvStr('PG_DB_HOST', 'localhost'),
+  PG_DB_PORT: getEnvNumber('PG_DB_PORT', 5432),
+  PG_DB_NAME: getEnvStr('PG_DB_NAME', 'mars-db'),
+  PG_DB_URL: getEnvStr('PG_DB_URL', 'postgresql://mars-user:mars-password@localhost:5432/dolphin-admin'),
+  // MongoDB 配置
+  MONGO_DB_USER: getEnvStr('MONGO_DB_USER', 'mars-user'),
+  MONGO_DB_PASSWORD: getEnvStr('MONGO_DB_PASSWORD', 'mars-password'),
+  MONGO_DB_HOST: getEnvStr('MONGO_DB_HOST', 'localhost'),
+  MONGO_DB_PORT: getEnvNumber('MONGO_DB_PORT', 27017),
+  MONGO_DB_NAME: getEnvStr('MONGO_DB_NAME', 'dolphin-admin'),
+  MONGO_DB_URL: getEnvStr('MONGO_DB_URL', 'mongodb://mars-user:mars-password@localhost:27017/dolphin-admin')
 })
 
 /**

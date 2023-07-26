@@ -6,16 +6,9 @@ import { JWTManager } from '@/core'
 import { Controller, Post } from '@/decorators'
 import type { UserLoginInputModel, UserSignupInputModel } from '@/models'
 import { UserLoginResponse, UserSignupResponse } from '@/models'
+import { pgClient, SEED_SUPER_ADMIN_PASSWORD } from '@/prisma'
 import { AuthService, UsersService } from '@/services'
-import {
-  AuthType,
-  generateRandomString,
-  GlobalAuthConfig,
-  passwordEquals,
-  passwordHash,
-  prisma,
-  SEED_SUPER_ADMIN_PASSWORD
-} from '@/shared'
+import { AuthType, generateRandomString, GlobalAuthConfig, passwordEquals, passwordHash } from '@/shared'
 import type { JWTModel } from '@/types'
 
 @Controller('/auth')
@@ -252,7 +245,7 @@ class AuthController {
         return
       }
 
-      const authUser = await prisma.auth.findFirst({
+      const authUser = await pgClient.auth.findFirst({
         include: {
           user: true
         },
@@ -265,7 +258,7 @@ class AuthController {
       if (authUser) {
         const shouldChangeAccessToken = authUser.token !== githubToken
         if (shouldChangeAccessToken) {
-          await prisma.auth.update({
+          await pgClient.auth.update({
             where: {
               id: authUser.id
             },
@@ -296,7 +289,7 @@ class AuthController {
           message: t('Login.Success')
         })
       } else {
-        const user = await prisma.user.create({
+        const user = await pgClient.user.create({
           data: {
             username: `User-${generateRandomString(8)}`,
             password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
@@ -425,7 +418,7 @@ class AuthController {
         return
       }
 
-      const authUser = await prisma.auth.findFirst({
+      const authUser = await pgClient.auth.findFirst({
         include: {
           user: true
         },
@@ -438,7 +431,7 @@ class AuthController {
       if (authUser) {
         const shouldChangeAccessToken = authUser.token !== googleToken
         if (shouldChangeAccessToken) {
-          await prisma.auth.update({
+          await pgClient.auth.update({
             where: {
               id: authUser.id
             },
@@ -469,7 +462,7 @@ class AuthController {
           message: t('Login.Success')
         })
       } else {
-        const user = await prisma.user.create({
+        const user = await pgClient.user.create({
           data: {
             username: `User-${generateRandomString(8)}`,
             password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
