@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import type { Request, Response } from 'express'
 import morgan from 'morgan'
 
-import { LOG_PREFIX } from '@/shared'
+import { LOG_PREFIX } from '@/utils'
 
 /**
  * 获取带颜色的状态文本

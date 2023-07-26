@@ -1,5 +1,5 @@
 import type zh_CN from '@/locales/zh_CN.json'
-import type { LangList } from '@/shared'
+import type { LangList } from '@/utils'
 
 export type Lang = (typeof LangList)[number]
 

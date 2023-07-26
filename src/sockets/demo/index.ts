@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io'
 
 import { Event, Namespace } from '@/decorators'
-import { batchLog, getCurrentTime, GlobalAppConfig } from '@/shared'
+import { batchLog, getCurrentTime, GlobalAppConfig } from '@/utils'
 
 import { UserInfo, UserInfoWithMessage } from './types'
 

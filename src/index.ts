@@ -6,8 +6,8 @@ import https from 'https'
 import path from 'path'
 
 import { AppRegister } from '@/base'
-import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig, GlobalDevConfig } from '@/shared'
 import * as SocketControllers from '@/sockets'
+import { batchPrimaryLog, getCurrentTime, GlobalAppConfig, GlobalConfig, GlobalDevConfig } from '@/utils'
 
 import app from './app'
 

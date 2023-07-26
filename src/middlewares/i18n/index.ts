@@ -3,8 +3,8 @@ import fs from 'fs'
 import type { IncomingHttpHeaders } from 'http'
 import path from 'path'
 
-import { LangList } from '@/shared'
 import type { Lang, MessageSchema } from '@/types'
+import { LangList } from '@/utils'
 
 interface Headers extends IncomingHttpHeaders {
   language?: string

@@ -6,7 +6,7 @@ import path from 'path'
 import { AppRegister } from '@/base'
 import * as Controllers from '@/controllers'
 import { internalServerErrorHandler, morganLogger, notFoundHandler, processLang } from '@/middlewares'
-import { GlobalFileStorageConfig } from '@/shared'
+import { GlobalFileStorageConfig } from '@/utils'
 
 const storageFolder = GlobalFileStorageConfig.FILE_STORAGE_PATH
 

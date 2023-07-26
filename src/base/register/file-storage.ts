@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { primaryLog } from '@/shared'
+import { primaryLog } from '@/utils'
 
 const fileStorageRegister = (storageFolder: string) => {
   // Create file storage folder if not exists
