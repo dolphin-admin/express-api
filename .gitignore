@@ -35,5 +35,5 @@ coverage
 # Storage dir is where the upload files are stored.
 /storage
 
-# Prisma generated files
+# Prisma 生成的查询引擎目录需要忽略
 /src/prisma/generated

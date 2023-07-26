@@ -9,6 +9,7 @@ generator client {
   output        = "./generated/mongo"
 }
 
+// DEPRECATED: 已移动至 PostgreSQL
 /// 用户流量记录
 model UserTraffic {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId /// 唯一 ID

@@ -1,4 +1,5 @@
-import type { User } from '@/prisma/generated/pg'
+import type { User } from '@prisma/pg'
+
 import type { Lang, MessageSchema } from '@/types'
 
 declare global {

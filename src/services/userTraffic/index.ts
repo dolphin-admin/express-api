@@ -1,6 +1,7 @@
+import type { Prisma, UserTraffic } from '@prisma/pg'
+
 import type { PageUserTrafficsModel, UserTrafficCreateInputModel } from '@/models'
-import type { Prisma, UserTraffic } from '@/prisma/generated/mongo'
-import { mongoClient } from '@/shared'
+import { pgClient } from '@/prisma'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
 class UserTrafficService {
@@ -21,9 +22,9 @@ class UserTrafficService {
       ]
     }
 
-    const userTraffics = await mongoClient.userTraffic.findMany({})
+    const userTraffics = await pgClient.userTraffic.findMany({})
 
-    const total = await mongoClient.userTraffic.count({
+    const total = await pgClient.userTraffic.count({
       where,
       orderBy: {
         createdAt: 'desc'
@@ -45,7 +46,7 @@ class UserTrafficService {
    */
   async createUserTraffic(userTraffic: UserTrafficCreateInputModel, options?: ServiceOptions): Promise<UserTraffic> {
     const { currentUser } = options || {}
-    return mongoClient.userTraffic.create({
+    return pgClient.userTraffic.create({
       data: {
         ...userTraffic,
         createdBy: currentUser?.id

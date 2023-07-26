@@ -6,16 +6,9 @@ import { JWTManager } from '@/core'
 import { Controller, Post } from '@/decorators'
 import type { UserLoginInputModel, UserSignupInputModel } from '@/models'
 import { UserLoginResponse, UserSignupResponse } from '@/models'
+import { pgClient, SEED_SUPER_ADMIN_PASSWORD } from '@/prisma'
 import { AuthService, UsersService } from '@/services'
-import {
-  AuthType,
-  generateRandomString,
-  GlobalAuthConfig,
-  passwordEquals,
-  passwordHash,
-  pgClient,
-  SEED_SUPER_ADMIN_PASSWORD
-} from '@/shared'
+import { AuthType, generateRandomString, GlobalAuthConfig, passwordEquals, passwordHash } from '@/shared'
 import type { JWTModel } from '@/types'
 
 @Controller('/auth')

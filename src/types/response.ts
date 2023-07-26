@@ -1,6 +1,5 @@
+import type { User } from '@prisma/pg'
 import type { Response } from 'express'
-
-import type { User } from '@/prisma/generated/pg'
 
 import type { Lang, MessageSchema } from './i18n'
 

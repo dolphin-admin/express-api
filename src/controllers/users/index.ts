@@ -1,3 +1,5 @@
+import type { User } from '@prisma/pg'
+import { Prisma } from '@prisma/pg'
 import { Request } from 'express'
 
 import { Auth, Controller, Delete, Get, Patch, Post } from '@/decorators'
@@ -11,8 +13,6 @@ import type {
   UserUpdateModel
 } from '@/models'
 import { UserCreateResponse } from '@/models'
-import type { User } from '@/prisma/generated/pg'
-import { Prisma } from '@/prisma/generated/pg'
 import { UsersService } from '@/services'
 import { passwordEquals, passwordHash } from '@/shared'
 import { BasePageResponse, BaseResponse } from '@/types'

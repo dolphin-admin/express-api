@@ -1,8 +1,8 @@
+import type { UserTraffic } from '@prisma/pg'
 import { Request } from 'express'
 
 import { Auth, Controller, Get, Post } from '@/decorators'
 import type { UserTrafficCreateInputModel } from '@/models'
-import type { UserTraffic } from '@/prisma/generated/mongo'
 import { UserTrafficService } from '@/services'
 import type { PageRequestModel } from '@/types'
 import { BasePageResponse } from '@/types'

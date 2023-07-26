@@ -1,4 +1,5 @@
-import type { UserTraffic } from '@/prisma/generated/mongo'
+import type { UserTraffic } from '@prisma/pg'
+
 import type { PageResponseModel } from '@/types'
 
 export type PageUserTrafficsModel = {
@@ -8,8 +9,6 @@ export type PageUserTrafficsModel = {
 export type UserTrafficCreateInputModel = Pick<
   UserTraffic,
   | 'userId'
-  | 'userName'
-  | 'records'
   | 'app'
   | 'version'
   | 'env'

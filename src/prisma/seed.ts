@@ -1,13 +1,11 @@
 import { randAvatar } from '@ngneat/falso'
 import { hash } from '@node-rs/bcrypt'
+import type { Prisma, Role, User } from '@prisma/pg'
 
-import type { Prisma, Role, User } from '@/prisma/generated/pg'
-import { PrismaClient } from '@/prisma/generated/pg'
+import { errorLog, getCurrentTime, primaryLog } from '@/shared'
+
 import {
-  errorLog,
-  getCurrentTime,
-  GlobalDBConfig,
-  primaryLog,
+  pgClient,
   SEED_ENTER_SYSTEM_PERMISSION_KEY,
   SEED_ENTER_SYSTEM_PERMISSION_NAME_EN,
   SEED_ENTER_SYSTEM_PERMISSION_NAME_ZH,
@@ -16,15 +14,7 @@ import {
   SEED_SUPER_ADMIN_ROLE_NAME_EN,
   SEED_SUPER_ADMIN_ROLE_NAME_ZH,
   SEED_SUPER_ADMIN_USERNAME
-} from '@/shared'
-
-const pgClient = new PrismaClient({
-  datasources: {
-    db: {
-      url: GlobalDBConfig.PG_DB_URL
-    }
-  }
-})
+} from './prisma'
 
 const seed = async () => {
   const defaultUser: Prisma.UserCreateInput = {

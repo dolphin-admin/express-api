@@ -1,6 +1,8 @@
+import { Prisma } from '@prisma/pg'
+
 import type { SettingsInputModel } from '@/models'
-import { Prisma } from '@/prisma/generated/pg'
-import { generateUUID, pgClient } from '@/shared'
+import { pgClient } from '@/prisma'
+import { generateUUID } from '@/shared'
 import type { PageRequestModel, ServiceOptions } from '@/types'
 
 class SettingsService {
