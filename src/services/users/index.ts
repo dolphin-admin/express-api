@@ -98,9 +98,6 @@ class UsersService {
 
     const users = await pgClient.user.findMany({
       where,
-      orderBy,
-      skip: (page - 1) * pageSize,
-      take: pageSize,
       include: {
         userRoles: {
           select: {
@@ -112,7 +109,10 @@ class UsersService {
             authType: true
           }
         }
-      }
+      },
+      orderBy,
+      skip: (page - 1) * pageSize,
+      take: pageSize
     })
 
     const total = await pgClient.user.count({

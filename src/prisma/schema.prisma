@@ -208,14 +208,14 @@ model UserTraffic {
   longitude Float? /// 经度
   latitude  Float? /// 纬度
   altitude  Float? /// 海拔
-  enterAt   DateTime? @map("enter_at") @db.Timestamptz(3) /// 进入时间
-  leaveAt   DateTime? @map("leave_at") @db.Timestamptz(3) /// 离开时间
+  enterAt   DateTime? @map("enter_at") @db.Timestamptz(3) /// 进入页面时间
+  leaveAt   DateTime? @map("leave_at") @db.Timestamptz(3) /// 离开页面时间
   duration  Int? /// 访问时长（毫秒）
 
   user   User @relation(fields: [userId], references: [id]) /// 用户
   userId Int  @map("user_id") /// 用户 ID
 
-  trafficRecords TrafficRecord[] /// 访问记录
+  userTrafficRecords UserTrafficRecord[] /// 访问记录
 
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3) // 创建时间
   createdBy Int?      @map("created_by") // 创建人
@@ -224,17 +224,17 @@ model UserTraffic {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
   deletedBy Int?      @map("deleted_by") // 删除人
 
-  @@map("user_traffic")
+  @@map("system_user_traffic")
 }
 
-/// 访问记录（访问路由的记录）
-model TrafficRecord {
+/// 用户访问记录（用户访问路由的记录）
+model UserTrafficRecord {
   id       Int       @id @default(autoincrement()) /// 唯一 ID
   title    String?   @db.VarChar(255) /// 路由标题
   url      String?   @db.VarChar(1000) /// 路由 URL
   path     String?   @db.VarChar(1000) /// 路由路径
-  enterAt  DateTime? @map("enter_at") @db.Timestamptz(3) /// 进入时间
-  leaveAt  DateTime? @map("leave_at") @db.Timestamptz(3) /// 离开时间
+  enterAt  DateTime? @map("enter_at") @db.Timestamptz(3) /// 进入路由时间
+  leaveAt  DateTime? @map("leave_at") @db.Timestamptz(3) /// 离开路由时间
   duration Int? /// 停留时长（毫秒）
 
   userTraffic   UserTraffic @relation(fields: [userTrafficId], references: [id])
@@ -247,5 +247,5 @@ model TrafficRecord {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3) // 删除时间
   deletedBy Int?      @map("deleted_by") // 删除人
 
-  @@map("traffic_record")
+  @@map("system_user_traffic_record")
 }
