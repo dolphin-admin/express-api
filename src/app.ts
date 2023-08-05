@@ -18,6 +18,7 @@ app.use(morganLogger)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(bodyParser.text())
 app.use(bodyParser.urlencoded({ extended: true }))
 // 处理多语言，需要在路由注册之前
 app.use(processLang)

@@ -5,7 +5,8 @@
     "Updated": "Updated.",
     "UpdateFailed": "Update failed.",
     "Deleted": "Deleted.",
-    "DeleteFailed": "Delete failed."
+    "DeleteFailed": "Delete failed.",
+    "JSONParseFailed": "JSON parse failed."
   },
   "Welcome": "Welcome to Dolphin Admin!",
   "Router": {
