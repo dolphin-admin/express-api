@@ -70,6 +70,7 @@ module.exports = {
         'node/no-unsupported-features/es-syntax': ['error', { ignores: ['modules'] }],
         'node/no-missing-import': 'off',
         'import/prefer-default-export': 'off',
+        'import/order': 'off',
         'class-methods-use-this': 'off', // 通常 Controller Class 内部不会使用 this
         'no-param-reassign': [
           'error',
