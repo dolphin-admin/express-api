@@ -5,7 +5,7 @@ English / [简体中文](./README.zh-CN.md)
 Dolphin Admin Server is the backend service of Dolphin Admin Web, based on Express + TypeScript + Prisma + PostgresSQL,
 built with [EST](https://github.com/recallwei/est).
 
-## Feature
+## Features
 
 - [x] Build Web service based on [Express](https://expressjs.com/)
 - [x] [TypeScript](https://www.typescriptlang.org/), of course
