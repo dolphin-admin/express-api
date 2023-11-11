@@ -33,7 +33,7 @@
     "@ngneat/falso": "^7.1.1",
     "@node-rs/bcrypt": "^1.7.3",
     "@prisma/client": "^5.3.1",
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "body-parser": "^1.20.2",
     "chalk": "4.1.2",
     "cors": "^2.8.5",
